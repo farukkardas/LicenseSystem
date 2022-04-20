@@ -10,7 +10,7 @@ namespace DataAccess.Concrete
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(
-                @"Server=DESKTOP-HB75CHQ;Database=LicenseSystem;user id=sa;password=05366510050Ab*-;TrustServerCertificate=True");
+                @"Server=DESKTOP-JL9C5JC;Database=LicenseSystem;user id=sa;password=05366510050Ab*-;TrustServerCertificate=True");
         }
 
         public DbSet<KeyLicense>? KeyLicenses { get; set; }

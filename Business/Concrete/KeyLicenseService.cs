@@ -106,10 +106,10 @@ namespace Business.Concrete
             return new SuccessResult("Hwid reset successfully");
         }
 
-        public async Task<IResult> CheckLicense(string keyLicense, string hwid)
+        public async Task<IResult> CheckLicense(string keyLicense, string hwid,string requestIp)
         {
             var getKey = await _keyLicenseDal.Get(k => k.AuthKey == keyLicense);
-            var checkConditions = BusinessRules.Run(await CheckKeyAndHwidIsValid(keyLicense, hwid,getKey?.ExpirationDate));
+            var checkConditions = BusinessRules.Run(await CheckKeyAndHwidIsValid(keyLicense, hwid,getKey?.ExpirationDate,requestIp));
            
             if (checkConditions != null)
             {
@@ -121,6 +121,8 @@ namespace Business.Concrete
             getKey.IsOwned = true;
             getKey.Hwid = hwid;
             await _keyLicenseDal.Update(getKey);
+            var log = new Log {Success=true,OwnerId = getKey.OwnerId,Date = DateTime.Now,Message = $"Key logged successfully {keyLicense} and IP {requestIp}"};
+            await _logService.Add(log);
             return new SuccessResult($"Successfully authorized. Expiry: {getKey.ExpirationDate}");
         }
 
@@ -169,7 +171,7 @@ namespace Business.Concrete
             return new SuccessResult("All hwids are reset successfully");
         }
 
-        private async Task<IResult> CheckKeyAndHwidIsValid(string keyLicense, string hwid,DateTime? expirationDate)
+        private async Task<IResult> CheckKeyAndHwidIsValid(string keyLicense, string hwid,DateTime? expirationDate,string requestIp)
         {
             var getKey = await _keyLicenseDal.Get(k => k.AuthKey == keyLicense);
 
@@ -178,12 +180,13 @@ namespace Business.Concrete
                 return new ErrorResult("Key not found");
             }
             
-            var log = new Log {OwnerId = getKey.OwnerId,Date = DateTime.Now,Message = $"Key logged successfully {keyLicense} and hwid {hwid}"};
             
             if (String.IsNullOrEmpty(hwid))
             {
                 return new ErrorResult("Hwid not valid!");
             }
+
+            var log = new Log {OwnerId = getKey.OwnerId,Date = DateTime.Now,Message = $"Key error  {keyLicense} and IP {requestIp}"};
 
             if (getKey is {IsOwned: true})
             {
@@ -205,8 +208,7 @@ namespace Business.Concrete
                 return new ErrorResult("Key expired!");
             }
 
-            log.Success = true;
-            await _logService.Add(log);
+         
             return new SuccessResult();
         }
 
