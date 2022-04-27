@@ -65,7 +65,7 @@ namespace WebAPI
                   
                     Contact = new OpenApiContact
                     {
-                        Name = "Faruk Kardaþ",
+                        Name = "Faruk Kardaï¿½",
                         Email = "farukkardasx@gmail.com",
                         Url = new Uri("https://www.linkedin.com/in/faruk-kardas/"),
                     }
@@ -79,7 +79,6 @@ namespace WebAPI
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             //Exception Middleware for handle error
-            app.ConfigureCustomExceptionMiddleware();
 
             //Using static files from root directory
             app.UseStaticFiles(new StaticFileOptions
@@ -98,8 +97,10 @@ namespace WebAPI
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger(c => { c.RouteTemplate = "/swagger/{documentName}/swagger.json"; });
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FmsAPI v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LicenseSystem v1"));
             }
+
+            app.ConfigureCustomExceptionMiddleware();
 
             app.UseHttpsRedirection();
 

@@ -17,7 +17,7 @@ namespace Business.DependencyResolvers
         {
             builder.RegisterType<UserService>().As<IUserService>().SingleInstance();
             builder.RegisterType<EfUserDal>().As<IUserDal>().SingleInstance();
-            
+
             builder.RegisterType<KeyLicenseService>().As<IKeyLicenseService>().SingleInstance();
             builder.RegisterType<EfKeyDal>().As<IKeyLicenseDal>().SingleInstance();
 
@@ -26,13 +26,17 @@ namespace Business.DependencyResolvers
 
             builder.RegisterType<PanelService>().As<IPanelService>().SingleInstance();
             builder.RegisterType<EfPanelDal>().As<IPanelDal>().SingleInstance();
-            
+
             builder.RegisterType<LogService>().As<ILogService>().SingleInstance();
             builder.RegisterType<EfLogDal>().As<ILogDal>().SingleInstance();
-            
+
+            builder.RegisterType<ApplicationService>().As<IApplicationService>().SingleInstance();
+            builder.RegisterType<EfApplicationDal>().As<IApplicationDal>().SingleInstance();
+
+
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 
-            
+
             builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces()
                 .EnableInterfaceInterceptors(new ProxyGenerationOptions()
                 {

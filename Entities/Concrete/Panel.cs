@@ -11,5 +11,6 @@ namespace Entities.Concrete
         public bool? IsActive { get; set; }
         public double Balance { get; set; }
         public int CreatedLicense { get; set; }
+        public int ApplicationId {get;set;}
     }
 }

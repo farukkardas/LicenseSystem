@@ -12,7 +12,6 @@ namespace WebAPI.Controllers
     public class LicenseController : Controller
     {
         private readonly IKeyLicenseService _keyLicenseService;
-        public string ClientIPAddr { get; private set; }
 
         public LicenseController(IKeyLicenseService keyLicenseService)
         {
@@ -20,9 +19,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("NewLicense")]
-        public async Task<IActionResult> AddNewLicense(int keyEnd, [FromHeader] int userId, [FromHeader] string securityKey)
+        public async Task<IActionResult> AddNewLicense(int keyEnd, int applicationId, [FromHeader] int userId, [FromHeader] string securityKey)
         {
-            var result = await _keyLicenseService.CreateLicenseKey(keyEnd, userId, securityKey);
+            var result = await _keyLicenseService.CreateLicenseKey(keyEnd, applicationId, userId, securityKey);
             if (result.Success)
             {
                 return Ok(result);
@@ -45,6 +44,19 @@ namespace WebAPI.Controllers
             return BadRequest(registerResult);
         }
 
+
+        [HttpGet("GetLicenseByAppId")]
+        public async Task<IActionResult> GetLicenseByAppId(int applicationId, [FromHeader] int userId, [FromHeader] string securityKey)
+        {
+            var result = await _keyLicenseService.GetLicensesByAppId(applicationId, userId, securityKey);
+
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
 
         [HttpGet("GetLicenses")]
         public async Task<IActionResult> GetLicenses([FromHeader] int userId, [FromHeader] string securityKey)
@@ -85,10 +97,36 @@ namespace WebAPI.Controllers
             return BadRequest(deleteAllKeys);
         }
 
+  [HttpPost("DeleteAllLicensesByAppId")]
+          public async Task<IActionResult> DeleteAllLicenses(int applicationId,[FromHeader] int userId, [FromHeader] string securityKey)
+        {
+            var deleteAllKeys = await _keyLicenseService.DeleteAllKeysByAppId(applicationId,userId, securityKey);
+
+            if (deleteAllKeys.Success)
+            {
+                return Ok(deleteAllKeys);
+            }
+
+            return BadRequest(deleteAllKeys);
+        }
+
         [HttpPost("ResetAllLicenses")]
         public async Task<IActionResult> ResetAllHwids([FromHeader] int userId, [FromHeader] string securityKey)
         {
             var deleteAllKeys = await _keyLicenseService.ResetAllHwid(userId, securityKey);
+
+            if (deleteAllKeys.Success)
+            {
+                return Ok(deleteAllKeys);
+            }
+
+            return BadRequest(deleteAllKeys);
+        }
+
+             [HttpPost("ResetAllLicensesByAppId")]
+        public async Task<IActionResult> ResetAllHwids(int applicationId,[FromHeader] int userId, [FromHeader] string securityKey)
+        {
+            var deleteAllKeys = await _keyLicenseService.ResetAllHwidByAppId(applicationId,userId, securityKey);
 
             if (deleteAllKeys.Success)
             {
@@ -103,22 +141,23 @@ namespace WebAPI.Controllers
         {
             var requestIp = OnGetAsync();
 
-            var checkLicense = await _keyLicenseService.CheckLicense(keyLicense, hwid,ClientIPAddr);
+            var checkLicense = await _keyLicenseService.CheckLicense(keyLicense, hwid, requestIp);
 
             if (checkLicense.Success)
             {
                 return Ok(checkLicense);
             }
 
-            return BadRequest(checkLicense);
+            return BadRequest();
         }
 
-
-        public async Task<IActionResult> OnGetAsync()
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public string OnGetAsync()
         {
+            string clientAdress = "";
             // Retrieve client IP address through HttpContext.Connection
-            ClientIPAddr = HttpContext.Connection.RemoteIpAddress?.ToString();
-            return Ok();
+            clientAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+            return clientAdress;
         }
     }
 }

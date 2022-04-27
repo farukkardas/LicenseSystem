@@ -17,16 +17,18 @@ namespace Business.Concrete
     public class KeyLicenseService : IKeyLicenseService
     {
         private readonly IKeyLicenseDal _keyLicenseDal;
+        private readonly IApplicationDal _applicationDal;
         private readonly IUserDal _userDal;
         private readonly IAuthService _authService;
         private readonly IPanelDal _panelDal;
         private ILogService _logService;
-        
+
         public KeyLicenseService(IKeyLicenseDal keyLicenseDal, IUserDal userDal, IAuthService authService,
-            IPanelDal panelDal, ILogService logService)
+            IPanelDal panelDal, ILogService logService, IApplicationDal applicationDal)
         {
             _keyLicenseDal = keyLicenseDal;
             _userDal = userDal;
+            _applicationDal = applicationDal;
             _authService = authService;
             _panelDal = panelDal;
             _logService = logService;
@@ -53,6 +55,21 @@ namespace Business.Concrete
         }
 
         [SecuredOperations("admin,reseller,localseller")]
+        public async Task<IDataResult<List<KeyLicense>>> GetLicensesByAppId(int appId, int userId, string securityKey)
+        {
+            var checkConditions = BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(userId, securityKey),await CheckIfApplicationOwnerTrue(appId, userId));    
+
+            if (checkConditions != null)
+            {
+                return new ErrorDataResult<List<KeyLicense>>(checkConditions.Message);
+            }
+
+            var result = await _keyLicenseDal.GetAll(k => k.ApplicationId == appId);
+
+            return new SuccessDataResult<List<KeyLicense>>(result);
+        }
+
+        [SecuredOperations("admin,reseller,localseller")]
         public async Task<IResult> Delete(int keyId, int id, string securityKey)
         {
             var checkConditions = BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(id, securityKey));
@@ -65,7 +82,7 @@ namespace Business.Concrete
             var getKey = await _keyLicenseDal.Get(k => k.Id == keyId);
             if (getKey == null) return new ErrorResult("Key not found!");
             await _keyLicenseDal.Delete(getKey);
-            var log = new Log {Success = true,Message = $"{getKey.AuthKey} deleted successfully.",Date = DateTime.Now,OwnerId = getKey.OwnerId};
+            var log = new Log { Success = true, Message = $"{getKey.AuthKey} deleted successfully.", Date = DateTime.Now, OwnerId = getKey.OwnerId };
             await _logService.Add(log);
             return new SuccessResult("Key successfully deleted!");
         }
@@ -101,31 +118,32 @@ namespace Business.Concrete
             getKey.IsOwned = false;
             await _keyLicenseDal.Update(getKey);
 
-            var log = new Log {Success = true,Message = $"{getKey.AuthKey} hwid reset successfully.",Date = DateTime.Now,OwnerId = getKey.OwnerId};
+            var log = new Log { Success = true, Message = $"{getKey.AuthKey} hwid reset successfully.", Date = DateTime.Now, OwnerId = getKey.OwnerId };
             await _logService.Add(log);
             return new SuccessResult("Hwid reset successfully");
         }
 
-        public async Task<IResult> CheckLicense(string keyLicense, string hwid,string requestIp)
+        public async Task<IResult> CheckLicense(string keyLicense, string hwid, string requestIp)
         {
             var getKey = await _keyLicenseDal.Get(k => k.AuthKey == keyLicense);
-            var checkConditions = BusinessRules.Run(await CheckKeyAndHwidIsValid(keyLicense, hwid,getKey?.ExpirationDate,requestIp));
-           
+            var checkConditions = BusinessRules.Run(await CheckKeyAndHwidIsValid(keyLicense, hwid, getKey?.ExpirationDate, requestIp));
+
             if (checkConditions != null)
             {
                 return new ErrorResult(checkConditions.Message);
             }
 
-            
+
             if (getKey == null) return new ErrorResult($"License not found!");
             getKey.IsOwned = true;
             getKey.Hwid = hwid;
             await _keyLicenseDal.Update(getKey);
-            var log = new Log {Success=true,OwnerId = getKey.OwnerId,Date = DateTime.Now,Message = $"Key logged successfully {keyLicense} and IP {requestIp}"};
+            var log = new Log { Success = true, OwnerId = getKey.OwnerId, Date = DateTime.Now, Message = $"Key logged successfully {keyLicense} and IP {requestIp}" };
             await _logService.Add(log);
             return new SuccessResult($"Successfully authorized. Expiry: {getKey.ExpirationDate}");
         }
 
+        [SecuredOperations("admin,reseller,localseller")]
         public async Task<IResult> DeleteAllKeys(int userId, string securityKey)
         {
             var businessConditions = BusinessRules.Run(
@@ -136,7 +154,7 @@ namespace Business.Concrete
             {
                 return new ErrorResult(businessConditions.Message);
             }
-            
+
 
             var allKeys = await _keyLicenseDal.GetAll(k => k.OwnerId == userId);
 
@@ -148,9 +166,33 @@ namespace Business.Concrete
             return new SuccessResult("All keys deleted successfully");
         }
 
+        [SecuredOperations("admin,reseller,localseller")]
+
+        public async Task<IResult> DeleteAllKeysByAppId(int appId, int userId, string securityKey)
+        {
+            var businessConditions = BusinessRules.Run(
+                await _authService.CheckUserSecurityKeyValid(userId, securityKey),await CheckIfApplicationOwnerTrue(appId, userId));
+
+            if (businessConditions != null)
+            {
+                return new ErrorResult(businessConditions.Message);
+            }
+
+            var allKeys = await _keyLicenseDal.GetAll(k => k.ApplicationId == appId);
+
+            foreach (var t in allKeys)
+            {
+                await _keyLicenseDal.Delete(t);
+            }
+
+            return new SuccessResult("All keys deleted successfully");
+        }
+
+        [SecuredOperations("admin,reseller,localseller")]
+
         public async Task<IResult> ResetAllHwid(int userId, string securityKey)
         {
-            
+
             var businessConditions = BusinessRules.Run(
                 await _authService.CheckUserSecurityKeyValid(userId, securityKey));
 
@@ -158,7 +200,7 @@ namespace Business.Concrete
             {
                 return new ErrorResult(businessConditions.Message);
             }
-           
+
             var allKeys = await _keyLicenseDal.GetAll(k => k.OwnerId == userId);
             foreach (var key in allKeys)
             {
@@ -166,12 +208,38 @@ namespace Business.Concrete
                 await _keyLicenseDal.Update(key);
             }
 
-            var log = new Log {Success = true,Message = $"All hwid reset successfully.",Date = DateTime.Now,OwnerId = userId};
+            var log = new Log { Success = true, Message = $"All hwid reset successfully.", Date = DateTime.Now, OwnerId = userId };
             await _logService.Add(log);
             return new SuccessResult("All hwids are reset successfully");
         }
 
-        private async Task<IResult> CheckKeyAndHwidIsValid(string keyLicense, string hwid,DateTime? expirationDate,string requestIp)
+        [SecuredOperations("admin,reseller,localseller")]
+        public async Task<IResult> ResetAllHwidByAppId(int applicationId,int userId, string securityKey)
+        {
+
+            var businessConditions = BusinessRules.Run(
+                await _authService.CheckUserSecurityKeyValid(userId, securityKey),await CheckIfApplicationOwnerTrue(applicationId, userId));
+
+            if (businessConditions != null)
+            {
+                return new ErrorResult(businessConditions.Message);
+            }
+
+            var allKeys = await _keyLicenseDal.GetAll(k => k.ApplicationId == applicationId);
+            foreach (var key in allKeys)
+            {
+                key.Hwid = null;
+                await _keyLicenseDal.Update(key);
+            }
+
+            var log = new Log { Success = true, Message = $"All hwid reset successfully.", Date = DateTime.Now, OwnerId = userId };
+            await _logService.Add(log);
+            return new SuccessResult("All hwids are reset successfully");
+        }
+  
+
+
+        private async Task<IResult> CheckKeyAndHwidIsValid(string keyLicense, string hwid, DateTime? expirationDate, string requestIp)
         {
             var getKey = await _keyLicenseDal.Get(k => k.AuthKey == keyLicense);
 
@@ -179,16 +247,16 @@ namespace Business.Concrete
             {
                 return new ErrorResult("Key not found");
             }
-            
-            
+
+
             if (String.IsNullOrEmpty(hwid))
             {
                 return new ErrorResult("Hwid not valid!");
             }
 
-            var log = new Log {OwnerId = getKey.OwnerId,Date = DateTime.Now,Message = $"Key error  {keyLicense} and IP {requestIp}"};
+            var log = new Log { OwnerId = getKey.OwnerId, Date = DateTime.Now, Message = $"Key error  {keyLicense} and IP {requestIp}" };
 
-            if (getKey is {IsOwned: true})
+            if (getKey is { IsOwned: true })
             {
                 if (getKey.Hwid != hwid)
                 {
@@ -197,7 +265,7 @@ namespace Business.Concrete
                     await _logService.Add(log);
                     return new ErrorResult("Key is occupied from another user!");
                 }
-                  
+
             }
 
             if (expirationDate <= DateTime.Now)
@@ -208,20 +276,21 @@ namespace Business.Concrete
                 return new ErrorResult("Key expired!");
             }
 
-         
+
             return new SuccessResult();
         }
 
         [SecuredOperations("admin,reseller,localseller")]
-        public async Task<IResult> CreateLicenseKey(int keyEnd, int requestId
+        public async Task<IResult> CreateLicenseKey(int keyEnd, int applicationId, int requestId
             , string securityKey)
         {
             var user = await _userDal.Get(u => u.Id == requestId);
+
             if (user == null) return new ErrorResult("User not found to create key!");
 
             var checkConditions =
                 BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(requestId, securityKey),
-                    await CheckUserBalance(user, keyEnd));
+                    await CheckUserBalance(user, keyEnd), await CheckIfApplicationOwnerTrue(applicationId, requestId));
 
             if (checkConditions != null)
             {
@@ -238,6 +307,7 @@ namespace Business.Concrete
                 _ => DateTime.Now.AddMonths(1)
             };
             keyLicense.OwnerId = user.Id;
+            keyLicense.ApplicationId = applicationId;
             await Add(keyLicense, requestId, securityKey);
 
             var getPanel = await _panelDal.Get(p => p.PanelSellerId == requestId);
@@ -248,13 +318,22 @@ namespace Business.Concrete
             }
 
 
-            var log = new Log {Success = true,Message = $"{keyLicense.AuthKey} created successfully.",Date = DateTime.Now,OwnerId = keyLicense.OwnerId};
+            var log = new Log { Success = true, Message = $"{keyLicense.AuthKey} created successfully.", Date = DateTime.Now, OwnerId = keyLicense.OwnerId };
             await _logService.Add(log);
             return new SuccessResult("Key successfully created!");
         }
 
+        private async Task<IResult> CheckIfApplicationOwnerTrue(int applicationId, int requestId)
+        {
+            var application = await _applicationDal.Get(a => a.Id == applicationId);
+            if (application == null) return new ErrorResult("Application not found!");
+            if (application.OwnerId != requestId) return new ErrorResult("You are not owner of this application!");
+            return new SuccessResult();
+        }
+
         private async Task<IResult> CheckUserBalance(User user, int keyEnd)
         {
+            //Here can be changed, example store prices in table and get from sql and calculate here
             switch (keyEnd)
             {
                 case 1 when user.Balance - 3 >= 0:

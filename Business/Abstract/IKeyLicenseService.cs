@@ -12,11 +12,14 @@ namespace Business.Abstract
         Task<IDataResult<KeyLicense>> GetById(string authKey);
         Task<IResult> Add(KeyLicense key, int id, string securityKey);
         Task<IResult> Delete(int keyId, int userId, string securityKey);
-        Task<IResult> CreateLicenseKey(int keyEnd, int userId, string securityKey);
+        Task<IResult> CreateLicenseKey(int keyEnd,int applicationId, int userId, string securityKey);
         Task<IDataResult<List<KeyLicense>>> GetLicenses(int id, string securityKey);
+        Task<IDataResult<List<KeyLicense>>> GetLicensesByAppId(int applicationId,int userId, string securityKey);
         Task<IResult> ResetHwid(int keyId, int userId, string securityKey);
         Task<IResult> CheckLicense(string keyLicense, string hwid,string requestIp);
         Task<IResult> DeleteAllKeys(int userId, string securityKey);
+        Task<IResult> DeleteAllKeysByAppId(int appId,int userId, string securityKey);
         Task<IResult> ResetAllHwid(int userId, string securityKey);
+        Task<IResult> ResetAllHwidByAppId(int applicationId,int userId, string securityKey);
     }
 }

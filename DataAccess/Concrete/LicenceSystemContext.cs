@@ -19,5 +19,7 @@ namespace DataAccess.Concrete
         public DbSet<OperationClaim>? OperationClaims { get; set; }
         public DbSet<UserOperationClaim>? UserOperationClaims { get; set; }
         public DbSet<Panel>? Panels { get; set; }
+
+        public DbSet<Application>? Applications { get; set; }
     }
 }

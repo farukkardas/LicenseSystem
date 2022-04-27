@@ -12,6 +12,7 @@ using Core.Aspects.Autofac.Transaction;
 using Core.Entities.Concrete;
 using Core.Utilities.Security.Hashing;
 using Entities.Dto;
+using Core.Aspects.Autofac.Validation;
 
 namespace Business.Concrete
 {
@@ -48,19 +49,20 @@ namespace Business.Concrete
             return new SuccessResult("Panel deleted successfully");
         }
 
-      
 
-        [SecuredOperations("admin,reseller")]
+       
+         [SecuredOperations("admin,reseller")]
+         [ValidationAspect(typeof(PanelValidator))]
         public async Task<IResult> CreateNewPanel(PanelRegisterDto panelRegisterDto, int id, string securityKey)
         {
             var businessConditions = BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(id, securityKey),
-                await CheckBalanceEnough(id,panelRegisterDto.Balance));
+                await CheckBalanceEnough(id, panelRegisterDto.Balance));
 
             if (businessConditions != null)
             {
                 return new ErrorResult(businessConditions.Message);
             }
-        
+
             HashingHelper.CreatePasswordHash(panelRegisterDto.PanelPassword, out var passwordHash,
                 out var passwordSalt);
             var user = new User
@@ -79,31 +81,32 @@ namespace Business.Concrete
                 PanelOwnerId = id,
                 PanelSellerId = user.Id,
                 Balance = panelRegisterDto.Balance,
+                ApplicationId = panelRegisterDto.ApplicationId,
                 IsActive = true
             };
             await Add(panel);
-         
-            var ownerUser = await _userDal.Get(u=>u.Id == id);
+
+            var ownerUser = await _userDal.Get(u => u.Id == id);
             if (ownerUser != null)
             {
                 ownerUser.Balance -= panelRegisterDto.Balance;
                 await _userDal.Update(ownerUser);
             }
-        
+
             return new SuccessResult("Panel created successfully!");
         }
 
         public async Task<IResult> DisablePanel(int panelId, int userId, string securityKey)
         {
             var businessConditions = BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(userId, securityKey),
-                await CheckOwnPanel(panelId,userId));
+                await CheckOwnPanel(panelId, userId));
 
             if (businessConditions != null)
             {
                 return new ErrorResult(businessConditions.Message);
             }
 
-            var panel =  await _panelDal.Get(p => p.Id == panelId);
+            var panel = await _panelDal.Get(p => p.Id == panelId);
             if (panel != null) panel.IsActive = !panel.IsActive;
             await _panelDal.Update(panel);
             string returnMessage = panel?.IsActive == true ? "Panel enabled!" : "Panel disabled!";
@@ -124,18 +127,18 @@ namespace Business.Concrete
         [TransactionScopeAspect]
         private async Task<IResult> CheckBalanceEnough(int id, double balance)
         {
-            var user = await _userDal.Get(u=>u.Id == id);
+            var user = await _userDal.Get(u => u.Id == id);
             if (user == null)
             {
                 return new ErrorResult("User not found for check balance!");
             }
-            
-            
+
+
             if (user.Balance - balance < 0 || balance > user.Balance || balance <= 100)
             {
                 return new ErrorResult("Balance not enough for create panel!");
             }
-            
+
 
             return new SuccessResult();
         }

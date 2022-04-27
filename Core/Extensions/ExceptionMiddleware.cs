@@ -43,16 +43,20 @@ namespace Core.Extensions
                 return httpContext.Response.WriteAsync(new ValidationErrorDetails
                 {
                     StatusCode = 400,
-                    message = message,
+                    Message = message,
                     Errors = errors
-                }.ToString()) ;
+                }.ToString());
+            }
+            else
+            {
+                return httpContext.Response.WriteAsync(new ErrorDetails
+                {
+                    StatusCode = httpContext.Response.StatusCode,
+                    Message = message
+                }.ToString());
             }
 
-            return httpContext.Response.WriteAsync(new ErrorDetails
-            {
-                StatusCode = httpContext.Response.StatusCode,
-                message = message
-            }.ToString());
+
         }
     }
 }

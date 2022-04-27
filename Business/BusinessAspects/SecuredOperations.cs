@@ -40,7 +40,7 @@ namespace Business.BusinessAspects
                 }
             }
 
-            throw new ValidationException("Authorization denied!");
+            throw new Exception("Authorization denied!");
         }
     }
 }
