@@ -31,23 +31,49 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("GetById")]
-        public async Task<IActionResult> GetById([FromHeader]int userId, [FromHeader]string securityKey)
+        public async Task<IActionResult> GetById([FromHeader] int userId, [FromHeader] string securityKey)
         {
-          
-            var result = await _applicationService.GetById(userId,securityKey);
 
-            if(!result.Success)
+            var result = await _applicationService.GetById(userId, securityKey);
+
+            if (!result.Success)
             {
                 return BadRequest(result);
             }
-         
+
             return Ok(result);
         }
 
         [HttpPost("Add")]
-        public async Task<IActionResult> Add([FromHeader]int userId,[FromHeader]string securityKey,Application application)
+        public async Task<IActionResult> Add([FromHeader] int userId, [FromHeader] string securityKey, Application application)
         {
-            var result = await _applicationService.Add(userId,securityKey,application);
+            var result = await _applicationService.Add(userId, securityKey, application);
+
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost("Delete")]
+        public async Task<IActionResult> Delete([FromHeader] int userId, [FromHeader] string securityKey, int applicationId)
+        {
+            var result = await _applicationService.Delete(userId, securityKey, applicationId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost("DisableApplication")]
+        public async Task<IActionResult> DisableApplication([FromHeader] int userId, [FromHeader] string securityKey, int applicationId)
+        {
+            var result = await _applicationService.DisableApplication(userId, securityKey, applicationId);
 
             if (!result.Success)
             {

@@ -57,7 +57,7 @@ namespace Business.Concrete
         [SecuredOperations("admin,reseller,localseller")]
         public async Task<IDataResult<List<KeyLicense>>> GetLicensesByAppId(int appId, int userId, string securityKey)
         {
-            var checkConditions = BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(userId, securityKey),await CheckIfApplicationOwnerTrue(appId, userId));    
+            var checkConditions = BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(userId, securityKey), await CheckIfApplicationOwnerTrue(appId, userId));
 
             if (checkConditions != null)
             {
@@ -134,7 +134,6 @@ namespace Business.Concrete
             }
 
 
-            if (getKey == null) return new ErrorResult($"License not found!");
             getKey.IsOwned = true;
             getKey.Hwid = hwid;
             await _keyLicenseDal.Update(getKey);
@@ -171,7 +170,7 @@ namespace Business.Concrete
         public async Task<IResult> DeleteAllKeysByAppId(int appId, int userId, string securityKey)
         {
             var businessConditions = BusinessRules.Run(
-                await _authService.CheckUserSecurityKeyValid(userId, securityKey),await CheckIfApplicationOwnerTrue(appId, userId));
+                await _authService.CheckUserSecurityKeyValid(userId, securityKey), await CheckIfApplicationOwnerTrue(appId, userId));
 
             if (businessConditions != null)
             {
@@ -214,11 +213,11 @@ namespace Business.Concrete
         }
 
         [SecuredOperations("admin,reseller,localseller")]
-        public async Task<IResult> ResetAllHwidByAppId(int applicationId,int userId, string securityKey)
+        public async Task<IResult> ResetAllHwidByAppId(int applicationId, int userId, string securityKey)
         {
 
             var businessConditions = BusinessRules.Run(
-                await _authService.CheckUserSecurityKeyValid(userId, securityKey),await CheckIfApplicationOwnerTrue(applicationId, userId));
+                await _authService.CheckUserSecurityKeyValid(userId, securityKey), await CheckIfApplicationOwnerTrue(applicationId, userId));
 
             if (businessConditions != null)
             {
@@ -236,22 +235,31 @@ namespace Business.Concrete
             await _logService.Add(log);
             return new SuccessResult("All hwids are reset successfully");
         }
-  
+
 
 
         private async Task<IResult> CheckKeyAndHwidIsValid(string keyLicense, string hwid, DateTime? expirationDate, string requestIp)
         {
             var getKey = await _keyLicenseDal.Get(k => k.AuthKey == keyLicense);
-
             if (getKey == null)
             {
                 return new ErrorResult("Key not found");
             }
 
-
             if (String.IsNullOrEmpty(hwid))
             {
                 return new ErrorResult("Hwid not valid!");
+            }
+
+            var getApplication = await _applicationDal.Get(a => a.Id == getKey.ApplicationId);
+
+            if (getApplication == null)
+            {
+                return new ErrorResult("Application not found");
+            }
+            if (getApplication.Status == false)
+            {
+                return new ErrorResult("Application is not active!");
             }
 
             var log = new Log { OwnerId = getKey.OwnerId, Date = DateTime.Now, Message = $"Key error  {keyLicense} and IP {requestIp}" };

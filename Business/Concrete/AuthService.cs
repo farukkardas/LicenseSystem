@@ -128,11 +128,6 @@ namespace Business.Concrete
                 return new ErrorResult("Your security key is not valid please login again.");
             }
 
-            if (user.SecurityKeyExpiration < DateTime.Now)
-            {
-                return new ErrorResult("Security key outdated. Please login again.");
-            }
-
             return new SuccessResult();
         }
 

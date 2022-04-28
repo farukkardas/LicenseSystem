@@ -12,5 +12,6 @@ namespace Business.Abstract
         Task<IResult> Add(int userId,string securityKey,Application application);
         Task<IResult> Update(int userId,string securityKey,Application application);
         Task<IResult> Delete(int userId,string securityKey,int id);
+        Task<IResult> DisableApplication(int userId,string securityKey,int applicationId);
     }
 }

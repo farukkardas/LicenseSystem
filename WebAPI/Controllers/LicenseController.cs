@@ -137,7 +137,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("CheckLicense")]
-        public async Task<IActionResult> CheckLicense([FromForm] string keyLicense, [FromForm] string hwid)
+        public async Task<IActionResult> CheckLicense(string keyLicense,string hwid)
         {
             var requestIp = OnGetAsync();
 
@@ -148,7 +148,7 @@ namespace WebAPI.Controllers
                 return Ok(checkLicense);
             }
 
-            return BadRequest();
+            return BadRequest(checkLicense);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
