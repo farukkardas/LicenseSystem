@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Business.Abstract;
 using Business.BusinessAspects;
 using Business.Validation;
+using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Validation;
 using Core.Entities.Concrete;
 using Core.Utilities.Business;
@@ -26,7 +27,6 @@ namespace Business.Concrete
             _authService = authService;
         }
 
-        [SecuredOperations("admin")]
         public async Task<IDataResult<List<User>>> GetAll()
         {
             var result = await _userDal.GetAll();
@@ -34,7 +34,6 @@ namespace Business.Concrete
             return new SuccessDataResult<List<User>>(result);
         }
 
-        [SecuredOperations("admin")]
         public async Task<IDataResult<User>> GetById(int userId)
         {
             var result = await _userDal.Get(u => u.Id == userId);
@@ -45,6 +44,7 @@ namespace Business.Concrete
 
         [ValidationAspect(typeof(UserValidator))]
         [SecuredOperations("admin,reseller")]
+        [CacheRemoveAspect(("IUserService.Get"))]
         public async Task<IResult> Add(User user)
         {
             await _userDal.Add(user);
@@ -52,6 +52,7 @@ namespace Business.Concrete
             return new SuccessResult("User added successfully!");
         }
         [SecuredOperations("admin")]
+        [CacheRemoveAspect(("IUserService.Get"))]
         public async Task<IResult> Delete(int userId)
         {
             var user = await _userDal.Get(u => u.Id == userId);
@@ -65,11 +66,12 @@ namespace Business.Concrete
             return await _userDal.Get(u => u.Email == email);
         }
 
-        public  async  Task<List<OperationClaim>> GetClaims(User user)
+        public async Task<List<OperationClaim>> GetClaims(User user)
         {
             return await _userDal.GetClaims(user);
         }
         [SecuredOperations("admin,localseller,reseller")]
+        [CacheAspect]
         public async Task<IDataResult<User>> GetUserDetails(int userId, string securityKey)
         {
             var checkConditions = BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(userId, securityKey));
@@ -79,11 +81,12 @@ namespace Business.Concrete
                 return new ErrorDataResult<User>(checkConditions.Message);
 
             }
-            
+
             var result = await GetById(userId);
             return new SuccessDataResult<User>(result.Data);
         }
 
+        [CacheAspect(60)]
         public async Task<IDataResult<UserDetailsDto>> GetUserInformations(int userId, string securityKey)
         {
             var checkConditions = BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(userId, securityKey));

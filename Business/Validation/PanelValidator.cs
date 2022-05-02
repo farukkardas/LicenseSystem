@@ -11,5 +11,6 @@ public class PanelValidator : AbstractValidator<PanelRegisterDto>
         RuleFor(p => p.Balance).NotEmpty().WithMessage("Balance cannot be empty!");
         RuleFor(p => p.Balance).GreaterThan(0).WithMessage("Balance must be greater than 0!");
         RuleFor(p => p.Balance).LessThan(1000000).WithMessage("Balance must be less than 1000000!");
+
     }
 }

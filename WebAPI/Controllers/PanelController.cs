@@ -53,5 +53,18 @@ namespace WebAPI.Controllers
 
             return BadRequest(result);
         }
+
+        [HttpGet("GetPanelsByUserId")]
+        public async Task<IActionResult> GetPanelsByUserId([FromHeader]int userId,[FromHeader] string securityKey,int applicationId)
+        {
+            var result = await _panelService.GetPanelsByUserId(userId, securityKey,applicationId);
+
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
     }
 }

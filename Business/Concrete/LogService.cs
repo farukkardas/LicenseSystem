@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Business.Abstract;
 using Business.BusinessAspects;
+using Core.Aspects.Autofac.Caching;
 using Core.Entities.Concrete;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
@@ -22,7 +23,8 @@ namespace Business.Concrete
         }
 
 
-        [SecuredOperations("admin,reseller,localseller")]
+        //[SecuredOperations("admin,reseller,localseller")]
+        //[CacheAspect(240)]
         public async Task<IDataResult<List<Log>>> GetAll(int userId)
         {
             var user = await _userDal.Get(u => u.Id == userId);
@@ -46,6 +48,8 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Log>>(result);
         }
 
+        [SecuredOperations("admin,reseller,localseller")]
+        [CacheAspect(240)]
         public async Task<IDataResult<Log>> GetById(int logId)
         {
             var result = await _logDal.Get(l => l.Id == logId);
@@ -53,6 +57,7 @@ namespace Business.Concrete
             return new SuccessDataResult<Log>(result);
         }
 
+        [CacheRemoveAspect("ILogService.Get")]
         public async Task<IResult> Add(Log log)
         {
             await _logDal.Add(log);
@@ -60,6 +65,8 @@ namespace Business.Concrete
             return new SuccessResult("Log added");
         }
 
+        [CacheRemoveAspect(("ILogService.Get"))]
+        [SecuredOperations("admin,reseller,localseller")]
         public async Task<IResult> Delete(int logId)
         {
             var log = await _logDal.Get(l => l.Id == logId);

@@ -1,3 +1,4 @@
+using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -11,6 +12,7 @@ using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Core.Aspects.Autofac.Caching;
 
 namespace Business.Concrete
 {
@@ -34,6 +36,7 @@ namespace Business.Concrete
             _logService = logService;
         }
 
+        [CacheAspect(60)]
         public async Task<IDataResult<List<KeyLicense>>> GetAll()
         {
             var result = await _keyLicenseDal.GetAll();
@@ -41,6 +44,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<KeyLicense>>(result);
         }
 
+        [CacheAspect(60)]
         public async Task<IDataResult<KeyLicense>> GetById(string authKey)
         {
             var result = await _keyLicenseDal.Get(k => k.AuthKey == authKey);
@@ -48,6 +52,8 @@ namespace Business.Concrete
             return new SuccessDataResult<KeyLicense>(result);
         }
 
+        [CacheRemoveAspect("IKeyLicenseService.Get")]
+        [SecuredOperations("admin,reseller,localseller")]
         public async Task<IResult> Add(KeyLicense key, int userId, string securityKey)
         {
             await _keyLicenseDal.Add(key);
@@ -55,6 +61,7 @@ namespace Business.Concrete
         }
 
         [SecuredOperations("admin,reseller,localseller")]
+        [CacheAspect]
         public async Task<IDataResult<List<KeyLicense>>> GetLicensesByAppId(int appId, int userId, string securityKey)
         {
             var checkConditions = BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(userId, securityKey), await CheckIfApplicationOwnerTrue(appId, userId));
@@ -70,6 +77,7 @@ namespace Business.Concrete
         }
 
         [SecuredOperations("admin,reseller,localseller")]
+        [CacheRemoveAspect(("IKeyLicenseService.Get"))]
         public async Task<IResult> Delete(int keyId, int id, string securityKey)
         {
             var checkConditions = BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(id, securityKey));
@@ -89,6 +97,7 @@ namespace Business.Concrete
 
 
         [SecuredOperations("admin,reseller,localseller")]
+        [CacheAspect]
         public async Task<IDataResult<List<KeyLicense>>> GetLicenses(int id, string securityKey)
         {
             var checkConditions = BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(id, securityKey));
@@ -98,11 +107,33 @@ namespace Business.Concrete
                 return new ErrorDataResult<List<KeyLicense>>(checkConditions.Message);
             }
 
+            List<KeyLicense?> result = new List<KeyLicense?>();
+
+            var getUserApplications = await _applicationDal.GetAll(a => a.OwnerId == id);
             var getLicenses = await _keyLicenseDal.GetAll(u => u.OwnerId == id);
-            return new SuccessDataResult<List<KeyLicense>>(getLicenses);
+
+            foreach (var license in getLicenses)
+            {
+                result.Add(license);
+            }
+
+            foreach (var application in getUserApplications)
+            {
+                var getLicensesByAppId = await _keyLicenseDal.GetAll(u => u.ApplicationId == application.Id);
+                foreach (var license in getLicensesByAppId)
+                {
+                    result.Add(license);
+                }
+            }
+
+            List<KeyLicense?> lastResult = result.ToArray().GroupBy(x => x.Id).Select(x => x.First()).ToList();
+
+
+            return new SuccessDataResult<List<KeyLicense>>(lastResult);
         }
 
         [SecuredOperations("admin,reseller,localseller")]
+        [CacheRemoveAspect(("IKeyLicenseService.Get"))]
         public async Task<IResult> ResetHwid(int keyId, int userId, string securityKey)
         {
             var checkConditions = BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(userId, securityKey));
@@ -143,6 +174,7 @@ namespace Business.Concrete
         }
 
         [SecuredOperations("admin,reseller,localseller")]
+        [CacheRemoveAspect(("IKeyLicenseService.Get"))]
         public async Task<IResult> DeleteAllKeys(int userId, string securityKey)
         {
             var businessConditions = BusinessRules.Run(
@@ -166,7 +198,7 @@ namespace Business.Concrete
         }
 
         [SecuredOperations("admin,reseller,localseller")]
-
+        [CacheRemoveAspect(("IKeyLicenseService.Get"))]
         public async Task<IResult> DeleteAllKeysByAppId(int appId, int userId, string securityKey)
         {
             var businessConditions = BusinessRules.Run(
@@ -188,7 +220,7 @@ namespace Business.Concrete
         }
 
         [SecuredOperations("admin,reseller,localseller")]
-
+        [CacheRemoveAspect(("IKeyLicenseService.Get"))]
         public async Task<IResult> ResetAllHwid(int userId, string securityKey)
         {
 
@@ -213,6 +245,7 @@ namespace Business.Concrete
         }
 
         [SecuredOperations("admin,reseller,localseller")]
+        [CacheRemoveAspect(("IKeyLicenseService.Get"))]
         public async Task<IResult> ResetAllHwidByAppId(int applicationId, int userId, string securityKey)
         {
 
@@ -289,8 +322,40 @@ namespace Business.Concrete
         }
 
         [SecuredOperations("admin,reseller,localseller")]
+        [CacheRemoveAspect(("IKeyLicenseService.Get"))]
         public async Task<IResult> CreateLicenseKey(int keyEnd, int applicationId, int requestId
             , string securityKey)
+        {
+            var user = await _userDal.Get(u => u.Id == requestId);
+
+            if (user == null)
+            {
+                return new ErrorResult("User not found");
+            }
+
+            var getClaims = await _userDal.GetClaims(user);
+
+            foreach (var claim in getClaims)
+            {
+                switch (claim.Name)
+                {
+                    case "admin":
+                        return await CreateAdminLicenseKey(keyEnd, applicationId, requestId, securityKey);
+                    case "reseller":
+                        return await CreateAdminLicenseKey(keyEnd, applicationId, requestId, securityKey);
+                    case "localseller":
+                        return await CreateLocalSellerLicenseKey(keyEnd, requestId, securityKey);
+                    default:
+                        return new ErrorResult("User not found to create key!");
+                }
+            }
+
+            return new SuccessResult("Key successfully created!");
+        }
+
+        [SecuredOperations("localseller")]
+        [CacheRemoveAspect(("IKeyLicenseService.Get"))]
+        private async Task<IResult> CreateLocalSellerLicenseKey(int keyEnd, int requestId, string securityKey)
         {
             var user = await _userDal.Get(u => u.Id == requestId);
 
@@ -298,7 +363,51 @@ namespace Business.Concrete
 
             var checkConditions =
                 BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(requestId, securityKey),
-                    await CheckUserBalance(user, keyEnd), await CheckIfApplicationOwnerTrue(applicationId, requestId));
+                    await CheckUserBalance(user, keyEnd));
+
+            if (checkConditions != null)
+            {
+                return new ErrorResult(checkConditions.Message);
+            }
+
+            var getApplicationId = await _panelDal.Get(p => p.PanelSellerId == requestId);
+
+            KeyLicense keyLicense = new();
+            keyLicense.AuthKey = FormatLicenseKey(GetMd5Sum(""));
+            keyLicense.ExpirationDate = keyEnd switch
+            {
+                1 => DateTime.Now.AddDays(1),
+                2 => DateTime.Now.AddDays(7),
+                _ => DateTime.Now.AddMonths(1)
+            };
+            keyLicense.OwnerId = user.Id;
+            keyLicense.ApplicationId = getApplicationId!.ApplicationId;
+            await Add(keyLicense, requestId, securityKey);
+
+            var getPanel = await _panelDal.Get(p => p.PanelSellerId == requestId);
+            if (getPanel != null)
+            {
+                getPanel.CreatedLicense += 1;
+                await _panelDal.Update(getPanel);
+            }
+
+            var log = new Log { Success = true, Message = $"{keyLicense.AuthKey} created successfully.", Date = DateTime.Now, OwnerId = keyLicense.OwnerId };
+            await _logService.Add(log);
+            return new SuccessResult("Key successfully created!");
+        }
+
+        [SecuredOperations("admin,reseller")]
+        [CacheRemoveAspect("IKeyLicenseService.Get")]
+        private async Task<IResult> CreateAdminLicenseKey(int keyEnd, int applicationId, int requestId, string securityKey)
+        {
+            var user = await _userDal.Get(u => u.Id == requestId);
+
+            if (user == null) return new ErrorResult("User not found to create key!");
+
+            var checkConditions =
+                BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(requestId, securityKey),
+                    await CheckUserBalance(user, keyEnd), await CheckIfApplicationOwnerTrue(applicationId, requestId)
+    );
 
             if (checkConditions != null)
             {
@@ -324,7 +433,6 @@ namespace Business.Concrete
                 getPanel.CreatedLicense += 1;
                 await _panelDal.Update(getPanel);
             }
-
 
             var log = new Log { Success = true, Message = $"{keyLicense.AuthKey} created successfully.", Date = DateTime.Now, OwnerId = keyLicense.OwnerId };
             await _logService.Add(log);

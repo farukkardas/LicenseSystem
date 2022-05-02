@@ -13,6 +13,7 @@ using Core.Entities.Concrete;
 using Core.Utilities.Security.Hashing;
 using Entities.Dto;
 using Core.Aspects.Autofac.Validation;
+using Core.Aspects.Autofac.Caching;
 
 namespace Business.Concrete
 {
@@ -32,6 +33,7 @@ namespace Business.Concrete
         }
 
         [SecuredOperations("admin,reseller")]
+        [CacheRemoveAspect(("IPanelService.Get"))]
         public async Task<IResult> Add(Panel panel)
         {
             await _panelDal.Add(panel);
@@ -39,6 +41,7 @@ namespace Business.Concrete
         }
 
         [SecuredOperations("admin,reseller")]
+        [CacheRemoveAspect(("IPanelService.Get"))]
         public async Task<IResult> Delete(int panelId)
         {
             var panel = await _panelDal.Get(p => p.Id == panelId);
@@ -50,9 +53,11 @@ namespace Business.Concrete
         }
 
 
-       
-         [SecuredOperations("admin,reseller")]
-         [ValidationAspect(typeof(PanelValidator))]
+
+        [SecuredOperations("admin,reseller")]
+        [ValidationAspect(typeof(PanelValidator))]
+        [TransactionScopeAspect]
+        [CacheRemoveAspect(("IPanelService.Get"))]
         public async Task<IResult> CreateNewPanel(PanelRegisterDto panelRegisterDto, int id, string securityKey)
         {
             var businessConditions = BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(id, securityKey),
@@ -96,6 +101,7 @@ namespace Business.Concrete
             return new SuccessResult("Panel created successfully!");
         }
 
+        [CacheRemoveAspect(("IPanelService.Get"))]
         public async Task<IResult> DisablePanel(int panelId, int userId, string securityKey)
         {
             var businessConditions = BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(userId, securityKey),
@@ -124,7 +130,6 @@ namespace Business.Concrete
             return new SuccessResult();
         }
 
-        [TransactionScopeAspect]
         private async Task<IResult> CheckBalanceEnough(int id, double balance)
         {
             var user = await _userDal.Get(u => u.Id == id);
@@ -133,17 +138,21 @@ namespace Business.Concrete
                 return new ErrorResult("User not found for check balance!");
             }
 
-
-            if (user.Balance - balance < 0 || balance > user.Balance || balance <= 100)
+            if (user.Balance - balance < 0 || balance > user.Balance)
             {
                 return new ErrorResult("Balance not enough for create panel!");
             }
 
+            if (balance < 100)
+            {
+                return new ErrorResult("Minimum panel price must be greater than 100!");
+            }
 
             return new SuccessResult();
         }
 
         [SecuredOperations("admin,reseller")]
+        [CacheAspect(60)]
         public async Task<IDataResult<List<Panel>>> GetAll()
         {
             var result = await _panelDal.GetAll();
@@ -151,17 +160,35 @@ namespace Business.Concrete
         }
 
         [SecuredOperations("admin,reseller")]
-        public async Task<IDataResult<List<Panel>>> GetUserPanels(int userId, string securityKey)
+        [CacheAspect(60)]
+        public async Task<IDataResult<List<PanelInfoDto>>> GetUserPanels(int userId, string securityKey)
         {
             var condition = BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(userId, securityKey));
 
             if (condition != null)
             {
-                return new ErrorDataResult<List<Panel>>(condition.Message);
+                return new ErrorDataResult<List<PanelInfoDto>>(condition.Message);
             }
 
-            var result = await _panelDal.GetAll(p => p.PanelOwnerId == userId);
-            return new SuccessDataResult<List<Panel>>(result);
+            var result = await _panelDal.GetPanelInformation(p => p.PanelOwnerId == userId);
+            return new SuccessDataResult<List<PanelInfoDto>>(result);
         }
+
+        [SecuredOperations("admin,reseller")]
+        [CacheAspect(60)]
+        public async Task<IDataResult<List<PanelInfoDto>>> GetPanelsByUserId(int userId, string securityKey, int applicationId)
+        {
+            var condition = BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(userId, securityKey)
+               );
+
+            if (condition != null)
+            {
+                return new ErrorDataResult<List<PanelInfoDto>>(condition.Message);
+            }
+
+            var result = await _panelDal.GetPanelInformation(p => p.PanelOwnerId == userId && p.ApplicationId == applicationId);
+            return new SuccessDataResult<List<PanelInfoDto>>(result);
+        }
+
     }
 }

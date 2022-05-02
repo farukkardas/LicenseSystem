@@ -10,7 +10,6 @@ namespace Business.Validation
     {
         public UserValidator()
         {
-          
             RuleFor(p => p.Email).NotEmpty().WithMessage("Email can not be empty!");
             RuleFor(p => p.Email).EmailAddress().WithMessage("Invalid mail format!");
             RuleFor(p => p.Email).MaximumLength(299).WithMessage("Email maximum 300 character!");
