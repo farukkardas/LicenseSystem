@@ -10,11 +10,11 @@
         "projectUniqueName": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Core\\Core.csproj",
         "projectName": "Core",
         "projectPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Core\\Core.csproj",
-        "packagesPath": "C:\\Users\\Faruk\\.nuget\\packages\\",
+        "packagesPath": "C:\\Users\\fagam\\.nuget\\packages\\",
         "outputPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Core\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Faruk\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\fagam\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

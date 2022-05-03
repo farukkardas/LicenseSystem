@@ -10,11 +10,11 @@
         "projectUniqueName": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Business\\Business.csproj",
         "projectName": "Business",
         "projectPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Business\\Business.csproj",
-        "packagesPath": "C:\\Users\\Faruk\\.nuget\\packages\\",
+        "packagesPath": "C:\\Users\\fagam\\.nuget\\packages\\",
         "outputPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Business\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Faruk\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\fagam\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -81,11 +81,11 @@
         "projectUniqueName": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Core\\Core.csproj",
         "projectName": "Core",
         "projectPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Core\\Core.csproj",
-        "packagesPath": "C:\\Users\\Faruk\\.nuget\\packages\\",
+        "packagesPath": "C:\\Users\\fagam\\.nuget\\packages\\",
         "outputPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Core\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Faruk\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\fagam\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -181,11 +181,11 @@
         "projectUniqueName": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\DataAccess\\DataAccess.csproj",
         "projectName": "DataAccess",
         "projectPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\DataAccess\\DataAccess.csproj",
-        "packagesPath": "C:\\Users\\Faruk\\.nuget\\packages\\",
+        "packagesPath": "C:\\Users\\fagam\\.nuget\\packages\\",
         "outputPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\DataAccess\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Faruk\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\fagam\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -223,7 +223,6 @@
               "version": "[5.0.0, )"
             },
             "NETStandard.Library": {
-              "suppressParent": "All",
               "target": "Package",
               "version": "[2.0.3, )"
             }
@@ -253,11 +252,11 @@
         "projectUniqueName": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Entities\\Entities.csproj",
         "projectName": "Entities",
         "projectPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Entities\\Entities.csproj",
-        "packagesPath": "C:\\Users\\Faruk\\.nuget\\packages\\",
+        "packagesPath": "C:\\Users\\fagam\\.nuget\\packages\\",
         "outputPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Entities\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Faruk\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\fagam\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -311,11 +310,11 @@
         "projectUniqueName": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\WebAPI\\WebAPI.csproj",
         "projectName": "WebAPI",
         "projectPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\WebAPI\\WebAPI.csproj",
-        "packagesPath": "C:\\Users\\Faruk\\.nuget\\packages\\",
+        "packagesPath": "C:\\Users\\fagam\\.nuget\\packages\\",
         "outputPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\WebAPI\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Faruk\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\fagam\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

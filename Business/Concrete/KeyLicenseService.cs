@@ -323,6 +323,7 @@ namespace Business.Concrete
 
         [SecuredOperations("admin,reseller,localseller")]
         [CacheRemoveAspect(("IKeyLicenseService.Get"))]
+        [CacheRemoveAspect("IUserService.Get")]
         public async Task<IResult> CreateLicenseKey(int keyEnd, int applicationId, int requestId
             , string securityKey)
         {
@@ -523,6 +524,143 @@ namespace Business.Concrete
             }
 
             return licenseKey.ToString();
+        }
+
+        [CacheRemoveAspect("IKeyLicenseService.Get")]
+        [SecuredOperations("admin,reseller")]
+        public async Task<IResult> ExtendAllKeys(int timeSelection, int dateOption, int applicationId, int userId, string securityKey)
+        {
+            var user = await _userDal.Get(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return new ErrorResult("User not found");
+            }
+
+            var checkConditions =
+     BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(userId, securityKey),
+         await CheckIfApplicationOwnerTrue(applicationId, userId));
+
+            if (checkConditions != null)
+                return new ErrorResult(checkConditions.Message);
+
+
+            if (applicationId == null)
+                return new ErrorResult("Application ID not passed!");
+
+            var getAllKeys = await _keyLicenseDal.GetAll(k => k.ApplicationId == applicationId);
+
+            foreach (var key in getAllKeys)
+            {
+                if (key != null)
+                {
+                    switch (dateOption)
+                    {
+                        case 1:
+                            //daily
+                            if (timeSelection > 0 && timeSelection <= 30)
+                            {
+                                key.ExpirationDate = key.ExpirationDate!.Value.AddDays(timeSelection);
+                                await _keyLicenseDal.Update(key);
+                            }
+                            break;
+                        case 2:
+                            //weekly
+                            if (timeSelection > 0 && timeSelection <= 30)
+                            {
+                                timeSelection *= 7;
+                                key.ExpirationDate = key.ExpirationDate!.Value.AddDays(timeSelection);
+                                await _keyLicenseDal.Update(key);
+
+                            }
+                            break;
+                        case 3:
+                            //monthly
+                            if (timeSelection > 0 && timeSelection <= 30)
+                            {
+                                key.ExpirationDate = key.ExpirationDate!.Value.AddMonths(timeSelection);
+                                await _keyLicenseDal.Update(key);
+
+                            }
+                            break;
+                        default:
+                            return new ErrorResult("Unknown parameters passed!");
+                    }
+                }
+
+
+            }
+            return new SuccessResult("All keys extended in this application!");
+
+        }
+
+
+        [CacheRemoveAspect("IKeyLicenseService.Get")]
+        [SecuredOperations("admin,reseller")]
+        public async Task<IResult> ExtendSingleKey(int timeSelection, int dateOption, int keyId, int userId, string securityKey)
+        {
+            var checkConditions =
+                 BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(userId, securityKey),
+                 await ApplicationOwnerWithKey(keyId,userId)
+                     );
+
+            if (checkConditions != null)
+                return new ErrorResult(checkConditions.Message);
+
+
+            if (keyId == null)
+                return new ErrorResult("Application ID not passed!");
+
+            var getKey = await _keyLicenseDal.Get(k => k.Id == keyId);
+
+            if (getKey != null)
+            {
+                switch (dateOption)
+                {
+                    case 1:
+                        //daily
+                        if (timeSelection > 0 && timeSelection <= 30)
+                        {
+                            getKey.ExpirationDate = getKey.ExpirationDate!.Value.AddDays(timeSelection);
+                            await _keyLicenseDal.Update(getKey);
+                        }
+                        break;
+                    case 2:
+                        //weekly
+                        if (timeSelection > 0 && timeSelection <= 30)
+                        {
+                            timeSelection *= 7;
+                            getKey.ExpirationDate = getKey.ExpirationDate!.Value.AddDays(timeSelection);
+                            await _keyLicenseDal.Update(getKey);
+
+                        }
+                        break;
+                    case 3:
+                        //monthly
+                        if (timeSelection > 0 && timeSelection <= 30)
+                        {
+                            getKey.ExpirationDate = getKey.ExpirationDate!.Value.AddMonths(timeSelection);
+                            await _keyLicenseDal.Update(getKey);
+
+                        }
+                        break;
+                    default:
+                        return new ErrorResult("Unknown parameters passed!");
+                }
+            }
+            return new SuccessResult("Key extended successfully!");
+        }
+
+        private async Task<IResult> ApplicationOwnerWithKey(int keyId, int userId)
+        {
+            var getKey = await _keyLicenseDal.Get(k => k.Id == keyId);
+            var getApplication = await _applicationDal.Get(a => a.Id == getKey.ApplicationId);
+            if (getApplication.OwnerId != userId)
+            {
+                return new ErrorResult("You don't have permission for extend this key!");
+            }
+
+            return new SuccessResult();
         }
     }
 }

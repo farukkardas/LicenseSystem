@@ -6289,7 +6289,7 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Faruk\\.nuget\\packages\\": {}
+    "C:\\Users\\fagam\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
@@ -6297,11 +6297,11 @@
       "projectUniqueName": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\DataAccess\\DataAccess.csproj",
       "projectName": "DataAccess",
       "projectPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\DataAccess\\DataAccess.csproj",
-      "packagesPath": "C:\\Users\\Faruk\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\fagam\\.nuget\\packages\\",
       "outputPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\DataAccess\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Faruk\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\fagam\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -6339,7 +6339,6 @@
             "version": "[5.0.0, )"
           },
           "NETStandard.Library": {
-            "suppressParent": "All",
             "target": "Package",
             "version": "[2.0.3, )"
           }

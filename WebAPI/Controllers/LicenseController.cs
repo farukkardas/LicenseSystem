@@ -151,6 +151,32 @@ namespace WebAPI.Controllers
             return BadRequest(checkLicense);
         }
 
+        [HttpPost("ExtendAllLicenses")]
+        public async Task<IActionResult> ExtendAllKeys(int timeSelection,int dateOption,int applicationId,[FromHeader] int userId, [FromHeader] string securityKey)
+        {
+            var result = await _keyLicenseService.ExtendAllKeys(timeSelection, dateOption, applicationId, userId, securityKey);
+
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
+        [HttpPost("ExtendLicense")]
+        public async Task<IActionResult> ExtendLicense(int timeSelection, int dateOption, int keyId, [FromHeader] int userId, [FromHeader] string securityKey)
+        {
+            var result = await _keyLicenseService.ExtendSingleKey(timeSelection, dateOption, keyId, userId, securityKey);
+
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
         [ApiExplorerSettings(IgnoreApi = true)]
         public string OnGetAsync()
         {
