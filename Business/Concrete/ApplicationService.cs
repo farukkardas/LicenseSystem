@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Business.Abstract;
 using Business.BusinessAspects;
 using Core.Aspects.Autofac.Caching;
+using Core.Utilities.Business;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using DataAccess.Abstract;
@@ -18,13 +19,15 @@ namespace Business.Concrete
         private readonly IKeyLicenseDal _keyLicenseDal;
         private readonly IPanelDal _panelDal;
         private readonly IUserDal _userDal;
-        public ApplicationService(IApplicationDal applicationDal, IAuthService authService, IKeyLicenseDal keyLicenseDal, IPanelDal panelDal, IUserDal userDal)
+        private readonly IKeyLicenseService _keyLicenseService;
+        public ApplicationService(IApplicationDal applicationDal, IAuthService authService, IKeyLicenseDal keyLicenseDal, IPanelDal panelDal, IUserDal userDal, IKeyLicenseService keyLicenseService)
         {
             _applicationDal = applicationDal;
             _authService = authService;
             _keyLicenseDal = keyLicenseDal;
             _panelDal = panelDal;
             _userDal = userDal;
+            _keyLicenseService = keyLicenseService;
         }
 
         [SecuredOperations("admin,reseller")]
@@ -128,9 +131,58 @@ namespace Business.Concrete
                 return new ErrorDataResult<List<Application>>(checkSk.Message);
             }
 
+            var getUser = await _userDal.Get(u => u.Id == userId);
+
+            if (getUser == null)
+            {
+                return new ErrorDataResult<List<Application>>("User not found.");
+            }
+
+            var getClaims = await _userDal.GetClaims(getUser);
+            var applications = await _applicationDal.GetAll(app => app.OwnerId == userId);
+            foreach (var claim in getClaims)
+            {
+                switch (claim.Name)
+                {
+                    case "admin":
+                        return new SuccessDataResult<List<Application>>(applications);
+                    case "reseller":
+                        return new SuccessDataResult<List<Application>>(applications);
+                    case "localseller":
+                        var getPanel = await _panelDal.Get(p => p.PanelSellerId == userId);
+                        applications = await _applicationDal.GetAll(app => app.Id == getPanel.ApplicationId);
+                        return new SuccessDataResult<List<Application>>(applications);
+                    default:
+                        return new SuccessDataResult<List<Application>>("User not found to create key!");
+                }
+            }
+
             var result = await _applicationDal.GetAll(app => app.OwnerId == userId);
 
             return new SuccessDataResult<List<Application>>(result);
+        }
+
+        [CacheRemoveAspect("IApplicationService.Get")]
+        [SecuredOperations("admin,reseller")]
+        public async Task<IResult> SetApplicationPrices(SetApplicationPrices applicationPrices, int userId, string securityKey)
+        {
+            var checkConditions =
+                  BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(userId, securityKey),
+                      await _keyLicenseService.CheckIfApplicationOwnerTrue(applicationPrices.ApplicationId, userId));
+
+            if (checkConditions != null)
+            {
+                return new ErrorResult(checkConditions.Message);
+            }
+
+            var getApplication = await _applicationDal.Get(app => app.Id == applicationPrices.ApplicationId);
+
+            getApplication.DailyPrice = applicationPrices.DailyPrice;
+            getApplication.WeeklyPrice = applicationPrices.WeeklyPrice;
+            getApplication.MonthlyPrice = applicationPrices.MonthlyPrice;
+            await _applicationDal.Update(getApplication);
+
+            return new SuccessResult("Application prices successfully set.");
         }
 
         [SecuredOperations("admin,reseller")]

@@ -177,6 +177,20 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpPost("DeleteUnusedKeys")]
+        public async Task<IActionResult> DeleteUnusedKeys(int applicationId,[FromHeader] int userId, [FromHeader] string securityKey)
+        {
+            var result = await _keyLicenseService.DeleteUnusedKeys(applicationId,userId, securityKey);
+
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
+
         [ApiExplorerSettings(IgnoreApi = true)]
         public string OnGetAsync()
         {

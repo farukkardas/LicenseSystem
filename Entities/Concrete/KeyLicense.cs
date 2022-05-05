@@ -12,5 +12,6 @@ namespace Entities.Concrete
         public DateTime? ExpirationDate { get; set; }
         public bool IsOwned { get; set; }
         public int ApplicationId {get;set;}
+      
     }
 }

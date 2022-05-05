@@ -23,5 +23,8 @@ namespace Business.Abstract
         Task<IResult> ResetAllHwidByAppId(int applicationId,int userId, string securityKey);
         Task<IResult> ExtendAllKeys(int timeSelection,int dateOption,int applicationId,int userId, string securityKey);
         Task<IResult> ExtendSingleKey(int timeSelection,int dateOption,int keyId,int userId,string securityKey);
+        Task<IResult> DeleteUnusedKeys(int applicationId,int userId,string securityKey);
+        Task<IResult> CheckIfApplicationOwnerTrue(int applicationId, int requestId);
+
     }
 }

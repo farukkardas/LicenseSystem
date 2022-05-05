@@ -56,7 +56,6 @@ namespace Business.Concrete
 
         [SecuredOperations("admin,reseller")]
         [ValidationAspect(typeof(PanelValidator))]
-        [TransactionScopeAspect]
         [CacheRemoveAspect(("IPanelService.Get"))]
         public async Task<IResult> CreateNewPanel(PanelRegisterDto panelRegisterDto, int id, string securityKey)
         {

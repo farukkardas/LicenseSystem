@@ -82,5 +82,18 @@ namespace WebAPI.Controllers
 
             return Ok(result);
         }
+
+        [HttpPut("SetApplicationPrices")]
+        public async Task<IActionResult> SetApplicationPrices(SetApplicationPrices applicationPrice, [FromHeader] int userId, [FromHeader] string securityKey)
+        {
+            var result = await _applicationService.SetApplicationPrices(applicationPrice, userId, securityKey);
+
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
     }
 }

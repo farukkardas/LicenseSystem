@@ -154,6 +154,7 @@ namespace Business.Concrete
             return new SuccessResult("Hwid reset successfully");
         }
 
+        [CacheRemoveAspect("IKeyLicenseService.Get")]
         public async Task<IResult> CheckLicense(string keyLicense, string hwid, string requestIp)
         {
             var getKey = await _keyLicenseDal.Get(k => k.AuthKey == keyLicense);
@@ -362,16 +363,30 @@ namespace Business.Concrete
 
             if (user == null) return new ErrorResult("User not found to create key!");
 
+            var getPanel = await _panelDal.Get(p => p.PanelSellerId == requestId);
+            
+            var getApplication = await _applicationDal.Get(a => a.Id == getPanel.ApplicationId);
+
+            SetApplicationPrices applicationPrices = new();
+            if (getApplication == null)
+            {
+                return new ErrorResult("Application not found to create key!");
+            }
+
+            applicationPrices.ApplicationId = getApplication.Id;
+            applicationPrices.WeeklyPrice = getApplication.WeeklyPrice;
+            applicationPrices.MonthlyPrice = getApplication.MonthlyPrice;
+            applicationPrices.DailyPrice = getApplication.DailyPrice;
+
             var checkConditions =
                 BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(requestId, securityKey),
-                    await CheckUserBalance(user, keyEnd));
+                    await CheckUserBalance(user, keyEnd,applicationPrices));
 
             if (checkConditions != null)
             {
                 return new ErrorResult(checkConditions.Message);
             }
 
-            var getApplicationId = await _panelDal.Get(p => p.PanelSellerId == requestId);
 
             KeyLicense keyLicense = new();
             keyLicense.AuthKey = FormatLicenseKey(GetMd5Sum(""));
@@ -382,10 +397,9 @@ namespace Business.Concrete
                 _ => DateTime.Now.AddMonths(1)
             };
             keyLicense.OwnerId = user.Id;
-            keyLicense.ApplicationId = getApplicationId!.ApplicationId;
+            keyLicense.ApplicationId = getPanel!.ApplicationId;
             await Add(keyLicense, requestId, securityKey);
 
-            var getPanel = await _panelDal.Get(p => p.PanelSellerId == requestId);
             if (getPanel != null)
             {
                 getPanel.CreatedLicense += 1;
@@ -405,9 +419,18 @@ namespace Business.Concrete
 
             if (user == null) return new ErrorResult("User not found to create key!");
 
+            var getApplication = await _applicationDal.Get(a => a.Id == applicationId);
+
+            SetApplicationPrices applicationPrices = new();
+
+            applicationPrices.ApplicationId = getApplication.Id;
+            applicationPrices.WeeklyPrice = getApplication.WeeklyPrice;
+            applicationPrices.MonthlyPrice = getApplication.MonthlyPrice;
+            applicationPrices.DailyPrice = getApplication.DailyPrice;
+
             var checkConditions =
                 BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(requestId, securityKey),
-                    await CheckUserBalance(user, keyEnd), await CheckIfApplicationOwnerTrue(applicationId, requestId)
+                    await CheckUserBalance(user, keyEnd,applicationPrices), await CheckIfApplicationOwnerTrue(applicationId, requestId)
     );
 
             if (checkConditions != null)
@@ -440,7 +463,7 @@ namespace Business.Concrete
             return new SuccessResult("Key successfully created!");
         }
 
-        private async Task<IResult> CheckIfApplicationOwnerTrue(int applicationId, int requestId)
+        public async Task<IResult> CheckIfApplicationOwnerTrue(int applicationId, int requestId)
         {
             var application = await _applicationDal.Get(a => a.Id == applicationId);
             if (application == null) return new ErrorResult("Application not found!");
@@ -448,21 +471,21 @@ namespace Business.Concrete
             return new SuccessResult();
         }
 
-        private async Task<IResult> CheckUserBalance(User user, int keyEnd)
+        private async Task<IResult> CheckUserBalance(User user, int keyEnd,SetApplicationPrices prices)
         {
             //Here can be changed, example store prices in table and get from sql and calculate here
             switch (keyEnd)
             {
-                case 1 when user.Balance - 3 >= 0:
-                    user.Balance = user.Balance - 10;
+                case 1 when user.Balance - prices.DailyPrice >= 0:
+                    user.Balance = user.Balance - prices.DailyPrice;
                     await _userDal.Update(user);
                     return new SuccessResult();
-                case 2 when user.Balance - 15 >= 0:
-                    user.Balance = user.Balance - 20;
+                case 2 when user.Balance - prices.WeeklyPrice >= 0:
+                    user.Balance = user.Balance - prices.WeeklyPrice;
                     await _userDal.Update(user);
                     return new SuccessResult();
-                case 3 when user.Balance - 30 >= 0:
-                    user.Balance = user.Balance - 30;
+                case 3 when user.Balance - prices.MonthlyPrice >= 0:
+                    user.Balance = user.Balance - prices.MonthlyPrice;
                     await _userDal.Update(user);
                     return new SuccessResult();
                 default:
@@ -661,6 +684,30 @@ namespace Business.Concrete
             }
 
             return new SuccessResult();
+        }
+
+        [CacheRemoveAspect("IKeyLicenseService.Get")]
+        [SecuredOperations("admin,reseller")]
+        public async Task<IResult> DeleteUnusedKeys(int applicationId, int userId, string securityKey)
+        {
+            var checkConditions =
+                 BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(userId, securityKey),
+                 await CheckIfApplicationOwnerTrue(applicationId, userId)
+                     );
+
+            if (checkConditions != null)
+                return new ErrorResult(checkConditions.Message);
+
+            
+
+            var getAllKeys = await _keyLicenseDal.GetAll(k=>k.ApplicationId == applicationId && k.IsOwned == false);
+
+            foreach (var key in getAllKeys)
+            {
+                await _keyLicenseDal.Delete(key);
+            }
+
+            return new SuccessResult("All unused keys deleted successfully!");
         }
     }
 }
