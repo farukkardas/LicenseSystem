@@ -190,6 +190,21 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        // delete expired keys
+        [HttpPost("DeleteExpiredKeys")]
+        public async Task<IActionResult> DeleteExpiredKeys(int? applicationId, [FromHeader] int userId, [FromHeader] string securityKey)
+        {
+   
+         var result = await _keyLicenseService.DeleteExpiredKeys(applicationId, userId, securityKey);
+
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
 
         [ApiExplorerSettings(IgnoreApi = true)]
         public string OnGetAsync()

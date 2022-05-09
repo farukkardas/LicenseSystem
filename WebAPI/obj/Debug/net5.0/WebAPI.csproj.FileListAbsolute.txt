@@ -1,3 +1,10 @@
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Debug\net5.0\WebAPI.csproj.AssemblyReference.cache
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Debug\net5.0\WebAPI.GeneratedMSBuildEditorConfig.editorconfig
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Debug\net5.0\WebAPI.AssemblyInfoInputs.cache
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Debug\net5.0\WebAPI.AssemblyInfo.cs
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Debug\net5.0\WebAPI.csproj.CoreCompileInputs.cache
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Debug\net5.0\WebAPI.MvcApplicationPartsAssemblyInfo.cs
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Debug\net5.0\WebAPI.MvcApplicationPartsAssemblyInfo.cache
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Debug\net5.0\appsettings.Development.json
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Debug\net5.0\appsettings.json
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Debug\net5.0\WebAPI.exe
@@ -53,13 +60,6 @@ D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Debug\net5.0\
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Debug\net5.0\Core.pdb
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Debug\net5.0\Entities.pdb
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Debug\net5.0\DataAccess.pdb
-D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Debug\net5.0\WebAPI.csproj.AssemblyReference.cache
-D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Debug\net5.0\WebAPI.GeneratedMSBuildEditorConfig.editorconfig
-D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Debug\net5.0\WebAPI.AssemblyInfoInputs.cache
-D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Debug\net5.0\WebAPI.AssemblyInfo.cs
-D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Debug\net5.0\WebAPI.csproj.CoreCompileInputs.cache
-D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Debug\net5.0\WebAPI.MvcApplicationPartsAssemblyInfo.cs
-D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Debug\net5.0\WebAPI.MvcApplicationPartsAssemblyInfo.cache
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Debug\net5.0\scopedcss\bundle\WebAPI.styles.css
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Debug\net5.0\staticwebassets\WebAPI.StaticWebAssets.Manifest.cache
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Debug\net5.0\WebAPI.RazorTargetAssemblyInfo.cache

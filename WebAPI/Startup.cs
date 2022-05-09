@@ -24,12 +24,15 @@ namespace WebAPI
 
         private IConfiguration Configuration { get; }
 
-
+        
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options => options.AddPolicy("ApiCorsPolicy",
-                builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); }));
-
+            //services.AddCors(options => options.AddPolicy("ApiCorsPolicy",
+            //    builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().SetIsOriginAllowed((host) => true); }));
+            services.AddCors(options => options.AddDefaultPolicy(policy =>
+            {
+                policy.AllowAnyMethod().AllowAnyHeader().AllowCredentials().SetIsOriginAllowed(origin => true);
+            }));
 
             services.AddControllers();
             services.AddRouting(r => r.SuppressCheckForUnhandledSecurityMetadata = true);
@@ -71,27 +74,30 @@ namespace WebAPI
                     }
                 });
             });
+            services.AddSignalR();
+            services.AddSignalRCore();
 
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            //Exception Middleware for handle error
-
+            //app.UseCors("ApiCorsPolicy");
+            app.UseCors();
             //Using static files from root directory
             app.UseStaticFiles(new StaticFileOptions
             {
                 ServeUnknownFileTypes = true
             });
 
-            app.UseCors("ApiCorsPolicy");
+          
             app.Use((context, next) =>
             {
                 context.Items["__CorsMiddlewareInvoked"] = true;
                 return next();
             });
+
+        
 
             if (env.IsDevelopment())
             {
@@ -100,7 +106,7 @@ namespace WebAPI
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LicenseSystem v1"));
             }
 
-      //      app.ConfigureCustomExceptionMiddleware();
+            //      app.ConfigureCustomExceptionMiddleware();
 
             app.UseHttpsRedirection();
 
@@ -109,8 +115,8 @@ namespace WebAPI
             app.UseAuthorization();
 
             app.UseAuthentication();
+            app.UseEndpoints(endpoints => { endpoints.MapControllers();});
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

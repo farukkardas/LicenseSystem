@@ -364,7 +364,7 @@ namespace Business.Concrete
             if (user == null) return new ErrorResult("User not found to create key!");
 
             var getPanel = await _panelDal.Get(p => p.PanelSellerId == requestId);
-            
+
             var getApplication = await _applicationDal.Get(a => a.Id == getPanel.ApplicationId);
 
             SetApplicationPrices applicationPrices = new();
@@ -380,7 +380,7 @@ namespace Business.Concrete
 
             var checkConditions =
                 BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(requestId, securityKey),
-                    await CheckUserBalance(user, keyEnd,applicationPrices));
+                    await CheckUserBalance(user, keyEnd, applicationPrices));
 
             if (checkConditions != null)
             {
@@ -430,7 +430,7 @@ namespace Business.Concrete
 
             var checkConditions =
                 BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(requestId, securityKey),
-                    await CheckUserBalance(user, keyEnd,applicationPrices), await CheckIfApplicationOwnerTrue(applicationId, requestId)
+                    await CheckUserBalance(user, keyEnd, applicationPrices), await CheckIfApplicationOwnerTrue(applicationId, requestId)
     );
 
             if (checkConditions != null)
@@ -471,7 +471,7 @@ namespace Business.Concrete
             return new SuccessResult();
         }
 
-        private async Task<IResult> CheckUserBalance(User user, int keyEnd,SetApplicationPrices prices)
+        private async Task<IResult> CheckUserBalance(User user, int keyEnd, SetApplicationPrices prices)
         {
             //Here can be changed, example store prices in table and get from sql and calculate here
             switch (keyEnd)
@@ -624,7 +624,7 @@ namespace Business.Concrete
         {
             var checkConditions =
                  BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(userId, securityKey),
-                 await ApplicationOwnerWithKey(keyId,userId)
+                 await ApplicationOwnerWithKey(keyId, userId)
                      );
 
             if (checkConditions != null)
@@ -698,9 +698,9 @@ namespace Business.Concrete
             if (checkConditions != null)
                 return new ErrorResult(checkConditions.Message);
 
-            
 
-            var getAllKeys = await _keyLicenseDal.GetAll(k=>k.ApplicationId == applicationId && k.IsOwned == false);
+
+            var getAllKeys = await _keyLicenseDal.GetAll(k => k.ApplicationId == applicationId && k.IsOwned == false);
 
             foreach (var key in getAllKeys)
             {
@@ -708,6 +708,86 @@ namespace Business.Concrete
             }
 
             return new SuccessResult("All unused keys deleted successfully!");
+        }
+
+        [SecuredOperations("admin,reseller,localseller")]
+        [CacheRemoveAspect("IKeyLicenseService.Get")]
+        public async Task<IResult> DeleteExpiredKeys(int? applicationId, int userId, string securityKey)
+        {
+            var checkConditions =
+                 BusinessRules.Run(await _authService.CheckUserSecurityKeyValid(userId, securityKey));
+
+            if (checkConditions != null)
+                return new ErrorResult(checkConditions.Message);
+
+            var user = await _userDal.Get(u => u.Id == userId);
+            if (user == null)
+            {
+                return new ErrorResult("User not found");
+            }
+
+            var roles = await _userDal.GetClaims(user);
+
+            // switch for roles
+
+            foreach (var role in roles)
+            {
+                switch (role.Name)
+                {
+                    case "admin":
+                        if(applicationId == null)
+                            return new ErrorResult("Application ID not passed!");
+
+                        var getAllKeys = await _keyLicenseDal.GetAll(k => k.ApplicationId == applicationId);
+                        // delete all expired keys
+                        foreach (var key in getAllKeys)
+                        {
+                            if (key.ExpirationDate < DateTime.Now)
+                            {
+                                await _keyLicenseDal.Delete(key);
+                            }
+                        }
+                        break;
+                    case "reseller":
+                        if (applicationId == null)
+                            return new ErrorResult("Application ID not passed!");                        
+                        
+                        var getAllKeysReseller = await _keyLicenseDal.GetAll(k => k.ApplicationId == applicationId);
+                        // delete all expired keys
+                        foreach (var key in getAllKeysReseller)
+                        {
+                            if (key.ExpirationDate < DateTime.Now)
+                            {
+                                await _keyLicenseDal.Delete(key);
+                            }
+                        }
+                        break;
+                    case "localseller":
+                        // get application id for this user form paneldal
+                        var getPanel = await _panelDal.Get(p => p.PanelSellerId == userId);
+                        if (getPanel == null)
+                        {
+                            return new ErrorResult("User not found");
+                        }
+                        // get applicationid for this getpanel
+                        var getApplication = await _applicationDal.Get(a => a.Id == getPanel.ApplicationId);
+                        // get all keys for this application
+                        var getAllKeysUser = await _keyLicenseDal.GetAll(k => k.ApplicationId == getApplication.Id && k.OwnerId == userId);
+                        // delete all expired keys
+                        foreach (var key in getAllKeysUser)
+                        {
+                            if (key.ExpirationDate < DateTime.Now)
+                            {
+                                await _keyLicenseDal.Delete(key);
+                            }
+                        }
+                        break;
+                    default:
+                        return new ErrorResult("You dont have perrmision role for this operation!");
+                }
+            }
+            return new SuccessResult("All expired keys deleted successfully!");
+
         }
     }
 }
