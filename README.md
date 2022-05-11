@@ -49,7 +49,7 @@ Key lisans sistemi ürünlerinizi lisanlamanız için oluşturduğum bir projedi
 ## Kurulum Video ( TÜRKÇE )
 
 
- [![ALT](https://youtube-md.vercel.app/iWlXEg5RAwA)](https://www.youtube.com/watch?v=ZDPJe7Pe5Nw)
+ [![ALT](https://youtube-md.vercel.app/ZDPJe7Pe5Nw)](https://www.youtube.com/watch?v=ZDPJe7Pe5Nw)
  
  
  ## About ( English )
