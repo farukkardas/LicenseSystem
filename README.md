@@ -5,7 +5,12 @@ Key lisans sistemi ürünlerinizi lisanlamanız için oluşturduğum bir projedi
 
 <br>
 
+## Admin Panel ve Example Console App
+- [Angular Admin Panel](https://github.com/farukkardas/License-panel)
+- [Console APP](https://github.com/farukkardas/LicenseChecker)
 
+<br>
+<br>
 
 <img src="https://i.hizliresim.com/bhlh36g.png"></img> 
 
