@@ -5,6 +5,10 @@ Key lisans sistemi ürünlerinizi lisanlamanız için oluşturduğum bir projedi
 
 <br>
 
+
+
+<img src="https://i.hizliresim.com/bhlh36g.png"></img> 
+
 `Bu proje hala geliştirme aşamasındadır gördüğünüz eksikleri giderebilir ve projeye katkıda bulunabilirsiniz.`
 
 `You can find EN README end of content.`
