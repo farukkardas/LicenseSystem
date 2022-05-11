@@ -49,7 +49,7 @@ Key lisans sistemi ürünlerinizi lisanlamanız için oluşturduğum bir projedi
 ## Kurulum Video ( TÜRKÇE )
 
 
- [![ALT](https://youtube-md.vercel.app/iWlXEg5RAwA)](https://https://www.youtube.com/watch?v=ZDPJe7Pe5Nw)
+ [![ALT](https://youtube-md.vercel.app/iWlXEg5RAwA)](https://www.youtube.com/watch?v=ZDPJe7Pe5Nw)
  
  
  ## About ( English )
@@ -95,7 +95,7 @@ Key license system is a project I created for you to license your products. This
 
 ## Installation Video ( EN )
 
- [![ALT](https://youtube-md.vercel.app/iWlXEg5RAwA)](https://www.youtube.com/watch?v=iWlXEg5RAwA)
+ [![ALT](https://youtube-md.vercel.app/iWlXEg5RAwA)](www.youtube.com/watch?v=iWlXEg5RAwA)
 
 
 
