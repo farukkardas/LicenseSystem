@@ -1,6 +1,5 @@
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\DataAccess\bin\Release\net5.0\DataAccess.deps.json
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\DataAccess\bin\Release\net5.0\DataAccess.dll
-D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\DataAccess\bin\Release\net5.0\ref\DataAccess.dll
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\DataAccess\bin\Release\net5.0\DataAccess.pdb
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\DataAccess\bin\Release\net5.0\Core.dll
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\DataAccess\bin\Release\net5.0\Entities.dll
@@ -13,5 +12,6 @@ D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\DataAccess\obj\Release\n
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\DataAccess\obj\Release\net5.0\DataAccess.csproj.CoreCompileInputs.cache
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\DataAccess\obj\Release\net5.0\DataAccess.csproj.CopyComplete
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\DataAccess\obj\Release\net5.0\DataAccess.dll
-D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\DataAccess\obj\Release\net5.0\ref\DataAccess.dll
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\DataAccess\obj\Release\net5.0\refint\DataAccess.dll
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\DataAccess\obj\Release\net5.0\DataAccess.pdb
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\DataAccess\obj\Release\net5.0\ref\DataAccess.dll

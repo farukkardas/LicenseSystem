@@ -16,7 +16,7 @@ namespace Business.Abstract
         Task<IDataResult<List<KeyLicense>>> GetLicenses(int id, string securityKey);
         Task<IDataResult<List<KeyLicense>>> GetLicensesByAppId(int applicationId,int userId, string securityKey);
         Task<IResult> ResetHwid(int keyId, int userId, string securityKey);
-        Task<IResult> CheckLicense(string keyLicense, string hwid,string requestIp);
+        Task<IResult> CheckLicense(string keyLicense, string hwid,int appId,string secretKey,string requestIp);
         Task<IResult> DeleteAllKeys(int userId, string securityKey);
         Task<IResult> DeleteAllKeysByAppId(int appId,int userId, string securityKey);
         Task<IResult> ResetAllHwid(int userId, string securityKey);

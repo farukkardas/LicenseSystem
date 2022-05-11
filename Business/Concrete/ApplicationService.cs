@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Business.Abstract;
 using Business.BusinessAspects;
 using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Transaction;
 using Core.Utilities.Business;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace Business.Concrete
 {
@@ -44,6 +47,10 @@ namespace Business.Concrete
             application.Status = true;
             application.CreationTime = DateTime.Now;
             application.OwnerId = userId;
+            application.SecretKey = await GenerateNewSecretKey();
+            application.DailyPrice = 3;
+            application.WeeklyPrice = 20;
+            application.MonthlyPrice = 30;
             await _applicationDal.Add(application);
 
             return new SuccessResult("Application successfully created.");
@@ -52,6 +59,8 @@ namespace Business.Concrete
         [SecuredOperations("admin,reseller")]
         [CacheRemoveAspect("IPanelService.Get")]
         [CacheRemoveAspect("IApplicationService.Get")]
+        [CacheRemoveAspect("IKeyLicenseService.Get")]    
+      //  [TransactionScopeAspect]
         public async Task<IResult> Delete(int userId, string securityKey, int id)
         {
             var application = await _applicationDal.Get(app => app.Id == id);
@@ -201,6 +210,28 @@ namespace Business.Concrete
             return new SuccessResult("Application successfully updated.");
         }
 
+        private async Task<string> GenerateNewSecretKey()
+        {
+            return await Task.Run(() =>
+            {
 
+                var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                var stringChars = new char[50];
+                var random = new Random();
+
+                for (int i = 0; i < stringChars.Length; i++)
+                {
+                    stringChars[i] = chars[random.Next(chars.Length)];
+                }
+
+                var finalString = new String(stringChars);
+
+              
+
+                return finalString;
+            });
+
+
+        }
     }
 }

@@ -137,11 +137,11 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("CheckLicense")]
-        public async Task<IActionResult> CheckLicense(string keyLicense,string hwid)
+        public async Task<IActionResult> CheckLicense(string keyLicense,string hwid,int appId,string secretKey)
         {
             var requestIp = OnGetAsync();
 
-            var checkLicense = await _keyLicenseService.CheckLicense(keyLicense, hwid, requestIp);
+            var checkLicense = await _keyLicenseService.CheckLicense(keyLicense, hwid, appId,secretKey, requestIp);
 
             if (checkLicense.Success)
             {

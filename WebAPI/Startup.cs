@@ -97,16 +97,18 @@ namespace WebAPI
                 return next();
             });
 
-        
 
-            if (env.IsDevelopment())
+
+            if (env.IsDevelopment() || env.IsProduction())
             {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger(c => { c.RouteTemplate = "/swagger/{documentName}/swagger.json"; });
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LicenseSystem v1"));
+                {
+                    app.UseDeveloperExceptionPage();
+                    app.UseSwagger(c => { c.RouteTemplate = "/swagger/{documentName}/swagger.json"; });
+                    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LicenseSystem v1"));
+                }
             }
 
-            //      app.ConfigureCustomExceptionMiddleware();
+          //  app.ConfigureCustomExceptionMiddleware();
 
             app.UseHttpsRedirection();
 
@@ -115,6 +117,7 @@ namespace WebAPI
             app.UseAuthorization();
 
             app.UseAuthentication();
+            
             app.UseEndpoints(endpoints => { endpoints.MapControllers();});
 
         }

@@ -5,7 +5,6 @@ D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\WebAPI.runtimeconfig.json
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\WebAPI.runtimeconfig.dev.json
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\WebAPI.dll
-D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\ref\WebAPI.dll
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\WebAPI.pdb
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\Autofac.dll
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\Autofac.Extensions.DependencyInjection.dll
@@ -25,7 +24,11 @@ D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\Microsoft.IdentityModel.Protocols.dll
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\Microsoft.IdentityModel.Tokens.dll
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\Microsoft.OpenApi.dll
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\Newtonsoft.Json.dll
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\System.Configuration.ConfigurationManager.dll
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\System.IdentityModel.Tokens.Jwt.dll
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\System.Runtime.Caching.dll
@@ -55,12 +58,16 @@ D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\WebAPI.AssemblyInfoInputs.cache
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\WebAPI.AssemblyInfo.cs
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\WebAPI.csproj.CoreCompileInputs.cache
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\WebAPI.MvcApplicationPartsAssemblyInfo.cs
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\WebAPI.MvcApplicationPartsAssemblyInfo.cache
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\scopedcss\bundle\WebAPI.styles.css
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\staticwebassets\WebAPI.StaticWebAssets.Manifest.cache
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\WebAPI.RazorTargetAssemblyInfo.cache
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\WebAPI.csproj.CopyComplete
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\WebAPI.dll
-D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\ref\WebAPI.dll
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\refint\WebAPI.dll
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\WebAPI.pdb
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\WebAPI.genruntimeconfig.cache
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\ref\WebAPI.dll
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\bin\Release\net5.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll

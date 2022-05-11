@@ -23,7 +23,11 @@ D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\PubTmp\Out\Microsoft.IdentityModel.Protocols.dll
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\PubTmp\Out\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\PubTmp\Out\Microsoft.IdentityModel.Tokens.dll
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\PubTmp\Out\Microsoft.OpenApi.dll
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\PubTmp\Out\Newtonsoft.Json.dll
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\PubTmp\Out\Swashbuckle.AspNetCore.Swagger.dll
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\PubTmp\Out\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\PubTmp\Out\Swashbuckle.AspNetCore.SwaggerUI.dll
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\PubTmp\Out\System.Configuration.ConfigurationManager.dll
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\PubTmp\Out\System.IdentityModel.Tokens.Jwt.dll
 D:\Development\VisualStudio\C#\LicenseAPI\LicenseSystem\WebAPI\obj\Release\net5.0\PubTmp\Out\System.Runtime.Caching.dll

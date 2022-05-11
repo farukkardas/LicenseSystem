@@ -155,10 +155,10 @@ namespace Business.Concrete
         }
 
         [CacheRemoveAspect("IKeyLicenseService.Get")]
-        public async Task<IResult> CheckLicense(string keyLicense, string hwid, string requestIp)
+        public async Task<IResult> CheckLicense(string keyLicense, string hwid,int appId,string secretKey,string requestIp)
         {
             var getKey = await _keyLicenseDal.Get(k => k.AuthKey == keyLicense);
-            var checkConditions = BusinessRules.Run(await CheckKeyAndHwidIsValid(keyLicense, hwid, getKey?.ExpirationDate, requestIp));
+            var checkConditions = BusinessRules.Run(await CheckKeyAndHwidIsValid(keyLicense, hwid, getKey?.ExpirationDate, requestIp),await CheckLicenseCorrectApp(keyLicense,appId,secretKey));
 
             if (checkConditions != null)
             {
@@ -172,6 +172,25 @@ namespace Business.Concrete
             var log = new Log { Success = true, OwnerId = getKey.OwnerId, Date = DateTime.Now, Message = $"Key logged successfully {keyLicense} and IP {requestIp}" };
             await _logService.Add(log);
             return new SuccessResult($"Successfully authorized. Expiry: {getKey.ExpirationDate}");
+        }
+
+        private async Task<IResult> CheckLicenseCorrectApp(string keyLicense, int appId, string secretKey)
+        {
+            //if parameters null return erroresult
+            if (keyLicense == null || appId == 0 || secretKey == null)
+            {
+                return new ErrorResult("Please all parameters!");
+            }
+
+            //get keylicense's appId
+            var getKey = await _keyLicenseDal.Get(k => k.AuthKey == keyLicense);
+            if (getKey == null) return new ErrorResult("Key not found!");
+            var getApp = await _applicationDal.Get(a => a.Id == getKey.ApplicationId);
+            if (getApp == null) return new ErrorResult("Application not found!");
+            //compare appId.secretKey and secretKey
+            if (getApp.SecretKey != secretKey) return new ErrorResult($"{secretKey} APP sc {getApp.SecretKey}You can't use this key with this application! [WRONG SECRET KEY]");
+
+            return new SuccessResult();
         }
 
         [SecuredOperations("admin,reseller,localseller")]
