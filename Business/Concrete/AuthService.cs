@@ -33,7 +33,7 @@ namespace Business.Concrete
             _logService = logService;
         }
 
-        [SecuredOperations("admin")]
+   //     [SecuredOperations("admin")]
         [ValidationAspect(typeof(RegisterValidator))]
         public async Task<IDataResult<User>> Register(UserRegisterDto userRegisterDto, string password)
         {

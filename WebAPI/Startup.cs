@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Hosting;
+using DataAccess.Concrete;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebAPI
 {
@@ -33,6 +35,7 @@ namespace WebAPI
             {
                 policy.AllowAnyMethod().AllowAnyHeader().AllowCredentials().SetIsOriginAllowed(origin => true);
             }));
+
 
             services.AddControllers();
             services.AddRouting(r => r.SuppressCheckForUnhandledSecurityMetadata = true);
@@ -57,7 +60,7 @@ namespace WebAPI
             {
                 new CoreModule()
             });
-            
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -65,10 +68,10 @@ namespace WebAPI
                     Version = "v1",
                     Title = "License API",
                     Description = "Licensing admin panel that you can use in your applications.",
-                  
+
                     Contact = new OpenApiContact
                     {
-                        Name = "Faruk Karda�",
+                        Name = "Faruk Kardas",
                         Email = "farukkardasx@gmail.com",
                         Url = new Uri("https://www.linkedin.com/in/faruk-kardas/"),
                     }
@@ -76,6 +79,7 @@ namespace WebAPI
             });
             services.AddSignalR();
             services.AddSignalRCore();
+        //    services.AddDbContext<LicenseSystemContext>(x => x.UseSqlServer(Configuration.GetConnectionString("SQLProvider"), y => y.MigrationsAssembly("DataAccess")));
 
         }
 
@@ -108,7 +112,7 @@ namespace WebAPI
                 }
             }
 
-          //  app.ConfigureCustomExceptionMiddleware();
+            //  app.ConfigureCustomExceptionMiddleware();
 
             app.UseHttpsRedirection();
 

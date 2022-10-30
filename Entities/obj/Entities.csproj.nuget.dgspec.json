@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Entities\\Entities.csproj": {}
+    "C:\\Development\\LicenseSystem\\Entities\\Entities.csproj": {}
   },
   "projects": {
-    "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Core\\Core.csproj": {
+    "C:\\Development\\LicenseSystem\\Core\\Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Core\\Core.csproj",
+        "projectUniqueName": "C:\\Development\\LicenseSystem\\Core\\Core.csproj",
         "projectName": "Core",
-        "projectPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Core\\Core.csproj",
-        "packagesPath": "C:\\Users\\fagam\\.nuget\\packages\\",
-        "outputPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Core\\obj\\",
+        "projectPath": "C:\\Development\\LicenseSystem\\Core\\Core.csproj",
+        "packagesPath": "C:\\Users\\Faruk\\.nuget\\packages\\",
+        "outputPath": "C:\\Development\\LicenseSystem\\Core\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\fagam\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Faruk\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -91,7 +91,8 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -100,21 +101,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.401\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Entities\\Entities.csproj": {
+    "C:\\Development\\LicenseSystem\\Entities\\Entities.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Entities\\Entities.csproj",
+        "projectUniqueName": "C:\\Development\\LicenseSystem\\Entities\\Entities.csproj",
         "projectName": "Entities",
-        "projectPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Entities\\Entities.csproj",
-        "packagesPath": "C:\\Users\\fagam\\.nuget\\packages\\",
-        "outputPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Entities\\obj\\",
+        "projectPath": "C:\\Development\\LicenseSystem\\Entities\\Entities.csproj",
+        "packagesPath": "C:\\Users\\Faruk\\.nuget\\packages\\",
+        "outputPath": "C:\\Development\\LicenseSystem\\Entities\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\fagam\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Faruk\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -128,8 +129,8 @@
           "net5.0": {
             "targetAlias": "net5.0",
             "projectReferences": {
-              "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Core\\Core.csproj": {
-                "projectPath": "D:\\Development\\VisualStudio\\C#\\LicenseAPI\\LicenseSystem\\Core\\Core.csproj"
+              "C:\\Development\\LicenseSystem\\Core\\Core.csproj": {
+                "projectPath": "C:\\Development\\LicenseSystem\\Core\\Core.csproj"
               }
             }
           }
@@ -149,7 +150,8 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -158,7 +160,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.401\\RuntimeIdentifierGraph.json"
         }
       }
     }

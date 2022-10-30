@@ -344,14 +344,14 @@ namespace Business.Concrete
         [SecuredOperations("admin,reseller,localseller")]
         [CacheRemoveAspect(("IKeyLicenseService.Get"))]
         [CacheRemoveAspect("IUserService.Get")]
-        public async Task<IResult> CreateLicenseKey(int keyEnd, int applicationId, int requestId
+        public async Task<IDataResult<KeyLicense>> CreateLicenseKey(int keyEnd, int applicationId, int requestId
             , string securityKey)
         {
             var user = await _userDal.Get(u => u.Id == requestId);
 
             if (user == null)
             {
-                return new ErrorResult("User not found");
+                return new ErrorDataResult<KeyLicense>("User not found");
             }
 
             var getClaims = await _userDal.GetClaims(user);
@@ -367,20 +367,20 @@ namespace Business.Concrete
                     case "localseller":
                         return await CreateLocalSellerLicenseKey(keyEnd, requestId, securityKey);
                     default:
-                        return new ErrorResult("User not found to create key!");
+                        return new ErrorDataResult<KeyLicense>("User not found to create key!");
                 }
             }
 
-            return new SuccessResult("Key successfully created!");
+            return new SuccessDataResult<KeyLicense>("Key successfully created!");
         }
 
         [SecuredOperations("localseller")]
         [CacheRemoveAspect(("IKeyLicenseService.Get"))]
-        private async Task<IResult> CreateLocalSellerLicenseKey(int keyEnd, int requestId, string securityKey)
+        private async Task<IDataResult<KeyLicense>> CreateLocalSellerLicenseKey(int keyEnd, int requestId, string securityKey)
         {
             var user = await _userDal.Get(u => u.Id == requestId);
 
-            if (user == null) return new ErrorResult("User not found to create key!");
+            if (user == null) return new ErrorDataResult<KeyLicense>("User not found to create key!");
 
             var getPanel = await _panelDal.Get(p => p.PanelSellerId == requestId);
 
@@ -389,7 +389,7 @@ namespace Business.Concrete
             SetApplicationPrices applicationPrices = new();
             if (getApplication == null)
             {
-                return new ErrorResult("Application not found to create key!");
+                return new ErrorDataResult<KeyLicense>("Application not found to create key!");
             }
 
             applicationPrices.ApplicationId = getApplication.Id;
@@ -403,7 +403,7 @@ namespace Business.Concrete
 
             if (checkConditions != null)
             {
-                return new ErrorResult(checkConditions.Message);
+                return new ErrorDataResult<KeyLicense>(checkConditions.Message);
             }
 
 
@@ -427,16 +427,16 @@ namespace Business.Concrete
 
             var log = new Log { Success = true, Message = $"{keyLicense.AuthKey} created successfully.", Date = DateTime.Now, OwnerId = keyLicense.OwnerId };
             await _logService.Add(log);
-            return new SuccessResult("Key successfully created!");
+            return new SuccessDataResult<KeyLicense>(keyLicense);
         }
 
         [SecuredOperations("admin,reseller")]
         [CacheRemoveAspect("IKeyLicenseService.Get")]
-        private async Task<IResult> CreateAdminLicenseKey(int keyEnd, int applicationId, int requestId, string securityKey)
+        private async Task<IDataResult<KeyLicense>> CreateAdminLicenseKey(int keyEnd, int applicationId, int requestId, string securityKey)
         {
             var user = await _userDal.Get(u => u.Id == requestId);
 
-            if (user == null) return new ErrorResult("User not found to create key!");
+            if (user == null) return new ErrorDataResult<KeyLicense>("User not found to create key!");
 
             var getApplication = await _applicationDal.Get(a => a.Id == applicationId);
 
@@ -454,7 +454,7 @@ namespace Business.Concrete
 
             if (checkConditions != null)
             {
-                return new ErrorResult(checkConditions.Message);
+                return new ErrorDataResult<KeyLicense>(checkConditions.Message);
             }
 
 
@@ -479,7 +479,7 @@ namespace Business.Concrete
 
             var log = new Log { Success = true, Message = $"{keyLicense.AuthKey} created successfully.", Date = DateTime.Now, OwnerId = keyLicense.OwnerId };
             await _logService.Add(log);
-            return new SuccessResult("Key successfully created!");
+            return new SuccessDataResult<KeyLicense>(keyLicense);
         }
 
         public async Task<IResult> CheckIfApplicationOwnerTrue(int applicationId, int requestId)
